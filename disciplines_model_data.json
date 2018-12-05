@@ -1,0 +1,107 @@
+[
+{
+  "model": "pymentorat.discipline",
+  "pk": 1,
+  "fields": {
+    "name": "Allemand"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 2,
+  "fields": {
+    "name": "Anglais"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 3,
+  "fields": {
+    "name": "Biologie"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 4,
+  "fields": {
+    "name": "Chimie"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 5,
+  "fields": {
+    "name": "Economie"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 6,
+  "fields": {
+    "name": "Espagnol"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 7,
+  "fields": {
+    "name": "Fran\u00e7ais"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 8,
+  "fields": {
+    "name": "G\u00e9ographie"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 9,
+  "fields": {
+    "name": "Gestion financi\u00e8re"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 10,
+  "fields": {
+    "name": "Histoire"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 11,
+  "fields": {
+    "name": "Italien"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 12,
+  "fields": {
+    "name": "Math\u00e9matiques OC"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 13,
+  "fields": {
+    "name": "Math\u00e9matiques std"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 14,
+  "fields": {
+    "name": "Math\u00e9matiques rend"
+  }
+},
+{
+  "model": "pymentorat.discipline",
+  "pk": 15,
+  "fields": {
+    "name": "Physique"
+  }
+}
+]

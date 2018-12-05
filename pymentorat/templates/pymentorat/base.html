@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>Mentorat</title>
+
+        {% load static %}
+
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap/bootstrap.min.css' %}" />
+
+        <!-- Custom styles for this template -->
+        <link rel="stylesheet" type="text/css" href="{% static 'css/simple-sidebar.css' %}" />
+
+    </head>
+    <body>
+
+        <div id="wrapper">
+
+            <!-- Sidebar -->
+            <div id="sidebar-wrapper">
+                <ul class="sidebar-nav">
+                    <li class="sidebar-brand">
+                        <a href="{% url 'pymentorat:index' %}">
+                            Mentorat
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'pymentorat:student_list' %}">Elèves</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'pymentorat:mentor_list' %}">Mentors</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'pymentorat:eda_list' %}">Demandeurs d'aide</a>
+                    </li>
+                    <li>
+                        <a href="#">EDA sans mentor</a>
+                    </li>
+                    <li>
+                        <a href="#">Contrats</a>
+                    </li>
+                    <li>
+                        <a href="#">Imprimés</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin:index' %}">Administration</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'pymentorat:teacher_list' %}">Maîtres</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'pymentorat:logout' %}">Déconnexion</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /#sidebar-wrapper -->
+
+
+            <!-- Page Content -->
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <a href="#menu-toggle" class="btn btn-secondary" id="menu-toggle">Menu</a>
+                    <h1>Mentorat GYYV</h1>
+                    {% block content %} {% endblock %}
+
+                </div>
+            </div>
+             <!-- /#page-content-wrapper -->
+        </div>
+        <!-- /#wrapper -->
+
+        <!-- Bootstrap core JavaScript -->
+        <script src="{% static 'js/jquery/jquery.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+
+        <!-- Menu Toggle Script -->
+        <script>
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+        </script>
+
+    </body>
+</html>
+

@@ -1,0 +1,55 @@
+{% extends 'pymentorat/base.html' %}
+
+{% block content %}
+    <h3>Listes des mentors</h3>
+
+     <a href="{% url 'pymentorat:mentor_create' %}" class="btn btn-secondary" id="new-eda">Nouveau Mentor</a>
+
+    <div class="container text-center">
+    <form class="form-inline" method="get">
+        {{ filter.form.as_p }}
+        <button type="submit">Filtrer</button>
+    </form>
+    </div>
+    {% if filter.qs %}
+        <table class="table table-striped table-hover">
+            <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Discipline</th>
+                <th>Classe</th>
+                <th>Maître</th>
+                <th>Année</th>
+                <th></th>
+            </tr>
+            {% for mentor in filter.qs %}
+            <tr>
+                <td>
+                    {{mentor.student.nom}}
+                </td>
+                <td>
+                    {{mentor.student.prenom}}
+                </td>
+                <td>
+                    {{mentor.discipline}}
+                </td>
+                <td>
+                    {{mentor.classe}}
+                </td>
+                 <td>
+                    {{mentor.teacher}}
+                </td>
+                <td>
+                    {{mentor.year}}
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:mentor_update' mentor.pk %}">modifier</a>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        Aucun mentor trouvé.
+    {% endif %}
+{% endblock%}
