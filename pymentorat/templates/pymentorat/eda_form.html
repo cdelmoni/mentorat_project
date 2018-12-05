@@ -1,0 +1,13 @@
+{% extends 'pymentorat/base.html' %}
+
+{% block content %}
+    <h3>Modifier inscription élève demandeur d'aide</h3>
+
+    <div class="container text-center">
+    <form  method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Sauver">
+    </form>
+
+{% endblock%}

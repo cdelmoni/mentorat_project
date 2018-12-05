@@ -1,0 +1,45 @@
+{% extends 'pymentorat/base.html' %}
+
+
+
+    {% block content %}
+
+    <h2>Listes des mentors</h2>
+
+    <table>
+    {% for mentor in mentors %}
+    <tr>
+        <td>
+            {{mentor.student.nom}}
+        </td>
+        <td>
+            {{mentor.student.prenom}}
+        </td>
+        <td>
+            {{mentor.discipline}}
+        </td>
+
+    </tr>
+    {% endfor %}
+    </table>
+
+    <h2>Listes des élèves demandeurs d'aide</h2>
+
+    <table>
+    {% for eda in edas %}
+    <tr>
+        <td>
+            {{eda.student.nom}}
+        </td>
+        <td>
+            {{eda.student.prenom}}
+        </td>
+        <td>
+            {{eda.discipline}}
+        </td>
+
+    </tr>
+    {% endfor %}
+    </table>
+
+    {% endblock %}
