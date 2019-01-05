@@ -1,10 +1,12 @@
 from django.db import models
-from django import forms
 from django.urls import reverse
 
+from core.models import TimeStampedModel
 from .apps import CURRENT_YEAR
 
-class Student(models.Model):
+
+
+class Student(TimeStampedModel):
     nom = models.CharField(max_length=50)
     prenom = models.CharField(max_length=50)
     email = models.EmailField(null=True, blank=True)
@@ -20,7 +22,7 @@ class Student(models.Model):
         verbose_name_plural = "Elèves"
 
 
-class Teacher(models.Model):
+class Teacher(TimeStampedModel):
     nom = models.CharField(max_length=50)
     prenom = models.CharField(max_length=50)
     id_OD = models.CharField(max_length=12, unique=True, null=True)
@@ -33,7 +35,7 @@ class Teacher(models.Model):
         verbose_name_plural = "Maîtres"
 
 
-class Discipline(models.Model):
+class Discipline(TimeStampedModel):
     name = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
@@ -43,7 +45,8 @@ class Discipline(models.Model):
         verbose_name = "Discipline"
         verbose_name_plural = "Disciplines"
 
-class Mentor(models.Model):
+
+class Mentor(TimeStampedModel):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
@@ -63,7 +66,7 @@ class Mentor(models.Model):
         verbose_name_plural = "Elèves mentors"
 
 
-class EDA(models.Model):
+class EDA(TimeStampedModel):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
@@ -80,7 +83,7 @@ class EDA(models.Model):
         verbose_name_plural = "Elèves demandeurs d'aide"
 
 
-class Contrat(models.Model):
+class Contrat(TimeStampedModel):
     eda = models.ForeignKey(EDA, on_delete=models.CASCADE)
     mentor = models.ForeignKey(Mentor, on_delete=models.CASCADE)
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
@@ -89,32 +92,9 @@ class Contrat(models.Model):
     end_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return "Contrat {0} avec {1} en {2} - {3}".format(self.eda.student.nom, self.mentor.student.nom, self.discipline.name, self.begin_date)
+        return "Contrat {0} avec {1} en {2} - {3}".format(self.eda.student.nom, self.mentor.student.nom,
+                                                          self.discipline.name, self.begin_date)
 
     class Meta:
         verbose_name = "Contrat"
         verbose_name_plural = "Contrats"
-
-
-class MentorForm(forms.ModelForm):
-    class Meta:
-        model = Mentor
-        fields = '__all__'
-
-
-class EDAForm(forms.ModelForm):
-    class Meta:
-        model = EDA
-        fields = '__all__'
-
-
-class StudentForm(forms.ModelForm):
-    class Meta:
-        model = Student
-        fields = ['email', 'tel', 'portable']
-        readonly_fields = ['nom', 'prenom', 'id_OD']
-
-class TeacherForm(forms.ModelForm):
-    class Meta:
-        model = Teacher
-        fields = '__all__'
