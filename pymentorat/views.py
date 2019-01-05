@@ -5,9 +5,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from .models import Discipline, Student, Teacher, EDA, Mentor, MentorForm, EDAForm, StudentForm, TeacherForm
+from .models import Discipline, Student, Teacher, EDA, Mentor
+from .forms import MentorForm, EDAForm, StudentForm, TeacherForm
 from .apps import CURRENT_YEAR
 from .filter import MentorFilter, EDAFilter, StudentFilter, TeacherFilter
+
 
 
 @login_required
@@ -119,6 +121,7 @@ class StudentListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         return context
 
+
 class MentorListView(LoginRequiredMixin, ListView):
     model = Mentor
     paginate_by = 50
@@ -128,7 +131,8 @@ class MentorListView(LoginRequiredMixin, ListView):
         context['discipline'] = "Allemand"
         return context
 
-class MentorUpdate(UpdateView):
+
+class MentorUpdate(LoginRequiredMixin, UpdateView):
     model = Mentor
     fields = [
         'student',
