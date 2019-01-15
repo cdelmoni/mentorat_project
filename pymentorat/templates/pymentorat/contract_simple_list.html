@@ -1,0 +1,41 @@
+{% extends 'pymentorat/base.html' %}
+
+{% block content %}
+    <h3>Listes de tous les contrats</h3>
+
+
+        <table class="table table-striped table-hover">
+            <tr>
+                <th>EDA</th>
+                <th>Mentor</th>
+                <th>Discipline</th>
+                <th>Date de début</th>
+                <th>Date de fin</th>
+                <th></th>
+            </tr>
+            {% for contrat in contrats %}
+            <tr>
+                <td>
+                    {{contrat.eda}}
+                </td>
+                <td>
+                    {{contrat.mentor}}
+                </td>
+                <td>
+                    {{contrat.discipline}}
+                </td>
+                <td>
+                    {{contrat.begin_date}}
+                </td>
+                 <td>
+                    {{contrat.end_date}}
+                </td>
+                <td>
+                    <!--<a href="{% url 'pymentorat:contrat_update' contrat.pk %}">modifier</a>-->
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+
+{% endblock%}

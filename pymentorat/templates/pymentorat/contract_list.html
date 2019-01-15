@@ -1,0 +1,55 @@
+{% extends 'pymentorat/base.html' %}
+
+{% block content %}
+    <h3>Listes des contrats</h3>
+
+
+    <div class="container text-center">
+    <form class="form-inline" method="get">
+        {{ filter.form.as_p }}
+        <button type="submit">Filtrer</button>
+    </form>
+    </div>
+
+    {% if filter.qs %}
+        <table class="table table-striped table-hover">
+            <tr>
+                <th>EDA</th>
+                <th>Mentor</th>
+                <th>Discipline</th>
+                <th>Date de début</th>
+                <th>Date de fin</th>
+                <th></th>
+                <th></th>
+            </tr>
+            {% for contract in filter.qs %}
+            <tr>
+                <td>
+                    <a href="#">{{contract.eda.student}}</a>
+                </td>
+                <td>
+                    <a href="#">{{contract.mentor.student}}</a>
+                </td>
+                <td>
+                    {{contract.discipline}}
+                </td>
+                <td>
+                    {{contract.begin_date | date:" d F Y"}}
+                </td>
+                 <td>
+                    {{contract.end_date | date:"d F Y"}}
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:contract_update' contract.pk %}">modifier</a>
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:contract_pdf' contract.pk %}">PDF</a>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        Aucun contrat trouvé.
+    {% endif %}
+{% endblock%}
