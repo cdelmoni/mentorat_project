@@ -1,0 +1,16 @@
+{% extends 'pymentorat/base.html' %}
+
+{% block content %}
+    <h3>Modifier le contrat</h3>
+
+
+    <div class="container text-center">
+        <h5> Demandeur : {{eda_vorname}} {{eda_name}} ({{eda_classe}}) - {{discipline}}</h5>
+        <form  method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Sauver">
+            <button onclick="window.history.back()" type="button">Annuler</button>
+        </form>
+    </div>
+{% endblock%}
