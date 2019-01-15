@@ -1,9 +1,10 @@
 {% extends 'pymentorat/base.html' %}
 
 {% block content %}
-    <h3>Listes des élèves demandeurs d'aide</h3>
+    <h3>{{ title }}</h3>
 
     <a href="{% url 'pymentorat:eda_create' %}" class="btn btn-secondary" id="new-eda">Nouveau EDA</a>
+    <a href="{% url 'pymentorat:student_list' %}" class="btn btn-secondary" id="student-list">Liste des élèves</a>
 
     <div class="container text-center">
         <form class="form-inline" method="get">
@@ -21,16 +22,17 @@
                 <th>Discipline</th>
                 <th>Classe</th>
                 <th>Maître</th>
-                <th>Année</th>
+                <th>Date d'inscription</th>
+                <th></th>
                 <th></th>
             </tr>
             {% for eda in filter.qs %}
             <tr>
                 <td>
-                    {{eda.student.nom}}
+                    {{eda.student.name}}
                 </td>
                 <td>
-                    {{eda.student.prenom}}
+                    {{eda.student.vorname}}
                 </td>
                 <td>
                     {{eda.discipline}}
@@ -42,10 +44,16 @@
                     {{eda.teacher}}
                 </td>
                 <td>
-                    {{eda.year}}
+                    {{eda.inscription_date | date:"d F Y"}}
                 </td>
                 <td>
                     <a href="{% url 'pymentorat:eda_update' eda.pk %}">modifier</a>
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:eda_create_from_student' eda.student.pk %}">+ EDA</a>
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:contract_create' eda.pk %}">+ Contrat</a>
                 </td>
 
             </tr>

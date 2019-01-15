@@ -16,6 +16,9 @@
         <!-- Custom styles for this template -->
         <link rel="stylesheet" type="text/css" href="{% static 'css/simple-sidebar.css' %}" />
 
+        <!-- custom CSS -->
+        <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}" />
+
     </head>
     <body>
 
@@ -39,10 +42,10 @@
                         <a href="{% url 'pymentorat:eda_list' %}">Demandeurs d'aide</a>
                     </li>
                     <li>
-                        <a href="#">EDA sans mentor</a>
+                        <a href="{% url 'pymentorat:eda_nomentor_list' %}">EDA sans mentor</a>
                     </li>
                     <li>
-                        <a href="#">Contrats</a>
+                        <a href="{% url 'pymentorat:contract_list' %}">Contrats</a>
                     </li>
                     <li>
                         <a href="#">Imprimés</a>

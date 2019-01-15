@@ -3,7 +3,8 @@
 {% block content %}
     <h3>Listes des mentors</h3>
 
-     <a href="{% url 'pymentorat:mentor_create' %}" class="btn btn-secondary" id="new-eda">Nouveau Mentor</a>
+    <a href="{% url 'pymentorat:mentor_create' %}" class="btn btn-secondary" id="new-eda">Nouveau Mentor</a>
+    <a href="{% url 'pymentorat:student_list' %}" class="btn btn-secondary" id="student-list">Liste des élèves</a>
 
     <div class="container text-center">
     <form class="form-inline" method="get">
@@ -21,14 +22,15 @@
                 <th>Maître</th>
                 <th>Année</th>
                 <th></th>
+                <th></th>
             </tr>
             {% for mentor in filter.qs %}
             <tr>
                 <td>
-                    {{mentor.student.nom}}
+                    {{mentor.student.name}}
                 </td>
                 <td>
-                    {{mentor.student.prenom}}
+                    {{mentor.student.vorname}}
                 </td>
                 <td>
                     {{mentor.discipline}}
@@ -44,6 +46,9 @@
                 </td>
                 <td>
                     <a href="{% url 'pymentorat:mentor_update' mentor.pk %}">modifier</a>
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:mentor_create_from_student' mentor.student.pk %}">+ mentor</a>
                 </td>
 
             </tr>

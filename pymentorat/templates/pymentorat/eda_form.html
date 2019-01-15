@@ -1,13 +1,19 @@
 {% extends 'pymentorat/base.html' %}
 
 {% block content %}
-    <h3>Modifier inscription élève demandeur d'aide</h3>
 
     <div class="container text-center">
+        {% if status == 'new' %}
+        <h3>Nouvelle inscription de demandeur d'aide</h3>
+        {% else %}
+        <h3>Modifier inscription EDA</h3>
+        {% endif %}
+        <h5> Elève : {{student_vorname}} {{student_name}}</h5>
     <form  method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Sauver">
+        <button onclick="window.history.back()" type="button">Annuler</button>
     </form>
 
 {% endblock%}

@@ -14,6 +14,7 @@ import os
 import json
 
 from django.core.exceptions import ImproperlyConfigured
+from django_filters.conf import DEFAULTS
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -83,6 +84,19 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+def FILTERS_VERBOSE_LOOKUPS():
+    verbose_lookups = DEFAULTS['VERBOSE_LOOKUPS'].copy()
+    verbose_lookups.update(
+        {
+            'contains': 'contient',
+            'icontains': 'contient',
+            'exact': '',
+            'gt': '>',
+            'lt': '<'
+        }
+    )
+    return verbose_lookups
 
 
 
