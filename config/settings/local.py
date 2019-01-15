@@ -26,6 +26,7 @@ DATABASES = {
         'PASSWORD': 'mentorat',
         'HOST': '',
         'PORT': '5432',
+        'ATOMIC_REQUESTS': True,    #toute les requêtes DB sont inclues dans une transaction
     }
 }
 

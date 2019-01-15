@@ -15,19 +15,21 @@
             <tr>
                 <th>Nom</th>
                 <th>Prénom</th>
-                <th>email</th>
-                <th>N° téléphone</th>
-                <th>N° natel</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Portable</th>
                 <th>id</th>
+                <th></th>
+                <th></th>
                 <th></th>
             </tr>
             {% for student in filter.qs %}
             <tr>
                 <td>
-                    {{student.nom}}
+                    {{student.name}}
                 </td>
                 <td>
-                    {{student.prenom}}
+                    {{student.vorname}}
                 </td>
                 <td>
                     {{student.email}}
@@ -43,6 +45,12 @@
                 </td>
                 <td>
                     <a href="{% url 'pymentorat:student_update' student.pk %}">modifier</a>
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:mentor_create_from_student' student.pk %}">+ mentor</a>
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:eda_create_from_student' student.pk %}">+ EDA</a>
                 </td>
 
             </tr>

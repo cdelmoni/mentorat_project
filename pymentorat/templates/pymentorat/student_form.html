@@ -1,14 +1,15 @@
 {% extends 'pymentorat/base.html' %}
 
 {% block content %}
-    <h3>Modifier élève </h3>
+
 
     <div class="container text-center">
-        <h4>{{ student_nom }} {{student_prenom}} ({{student_id}})</h4>
+        <h3>Modifier élève - {{ student_name }} {{student_vorname}} ({{student_id}}) </h3>
         <form  method="post">
             {% csrf_token %}
             {{ form.as_p }}
             <input type="submit" value="Sauver">
+            <button onclick="window.history.back()" type="button">Annuler</button>
         </form>
     </div>
 
