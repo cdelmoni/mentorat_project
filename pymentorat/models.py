@@ -115,8 +115,8 @@ class Contract(TimeStampedModel):
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
     contract_parent = models.ForeignKey('self', null=True, blank=True,  on_delete=models.CASCADE)
     year = models.PositiveIntegerField('Année', default=CURRENT_YEAR)
-    begin_date = models.DateTimeField('Date de début', auto_now_add=True)
-    end_date = models.DateTimeField('Date de fin', null=True, blank=True)
+    begin_date = models.DateField('Date de début', auto_now_add=True)
+    end_date = models.DateField('Date de fin', null=True, blank=True)
     remark = models.TextField('Remarque', null=True, blank=True)
 
 
@@ -147,3 +147,20 @@ class Contract(TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse('pymentorat:contract_update', kwargs={'id_contract': self.pk})
+
+class Convocation(TimeStampedModel):
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
+    date = models.DateField('Date de rendez-vous')
+    time = models.TimeField('Heure du rendez-vous')
+    place = models.CharField('Lieu de rendez-vous', default="devant la salle des maîtres", max_length=64)
+    message = models.CharField('Message', null=True, blank=True, max_length=64)
+
+    class Meta:
+        verbose_name = "Convocation"
+        verbose_name_plural = "Convocations"
+
+    def __str__(self):
+        return "Convocation {0} et {1} le {2} à {3} ".format(self.contract.eda.student.__str__(),
+                                                      self.contract.mentor.student.__str__(),
+                                                      self.date,
+                                                      self.time)

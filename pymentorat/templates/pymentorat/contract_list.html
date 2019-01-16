@@ -21,6 +21,7 @@
                 <th>Date de fin</th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
             {% for contract in filter.qs %}
             <tr>
@@ -44,6 +45,9 @@
                 </td>
                 <td>
                     <a href="{% url 'pymentorat:contract_pdf' contract.pk %}">PDF</a>
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:convocation_create' contract.pk %}">convoc.</a>
                 </td>
 
             </tr>

@@ -1,8 +1,9 @@
 from django import forms
 from django.forms.utils import ErrorList
 from django.db.models import F
+from django.contrib.admin import widgets
 
-from .models import Mentor, EDA, Student, Teacher, Contract, Discipline
+from .models import Mentor, EDA, Student, Teacher, Contract, Discipline, Convocation
 
 from .apps import CURRENT_YEAR
 
@@ -164,3 +165,29 @@ class ContractFormWithEDA(forms.ModelForm):
         ]
 
 
+class ConvocationFormWithContract(forms.ModelForm):
+
+    contract = forms.HiddenInput()
+
+    class Meta:
+        model = Convocation
+
+        fields = [
+            'contract',
+            'date',
+            'time',
+            'place',
+            'message'
+        ]
+
+        widgets = {
+            'contract': forms.HiddenInput,
+            'date': forms.SelectDateWidget,
+            'time': forms.DateTimeInput,
+            'place': forms.TextInput(attrs={'maxlength': 64}),
+            'message': forms.TextInput(attrs={'maxlength': 64}),
+        }
+
+        readonly_fields = [
+            'contract'
+        ]

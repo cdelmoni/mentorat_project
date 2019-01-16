@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Discipline, Student, Teacher, Mentor, EDA, Contract
+from .models import Discipline, Student, Teacher, Mentor, EDA, Contract, Convocation
 
 @admin.register(Discipline)
 class DisciplineAdmin(admin.ModelAdmin):
@@ -25,4 +25,8 @@ class MentorAdmin(admin.ModelAdmin):
 
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Convocation)
+class ConvocationAdmin(admin.ModelAdmin):
     pass
