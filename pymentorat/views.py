@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.decorators import login_required
@@ -6,14 +8,18 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.http import HttpResponse
 
+
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.units import cm
+from reportlab.lib.utils import ImageReader
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase.pdfmetrics import registerFont
 from io import BytesIO
 
-from .models import Discipline, Student, Teacher, EDA, Mentor, Contract
+from .models import Discipline, Student, Teacher, EDA, Mentor, Contract, Convocation
 from .forms import MentorForm, EDAForm, StudentForm, TeacherForm, ContractForm, ParagraphErrorList, ContractFormWithEDA
-from .forms import MentorFormWithStudent, EDAFormWithStudent
+from .forms import MentorFormWithStudent, EDAFormWithStudent, ConvocationFormWithContract
 from .apps import CURRENT_YEAR
 from .filter import MentorFilter, EDAFilter, StudentFilter, TeacherFilter, ContractFilter
 
@@ -255,6 +261,49 @@ def contract_update(request, id_contract):
     context['form'] = form
     return render(request,'pymentorat/contract_form.html',context=context)
 
+# Views for convocations
+@login_required
+def convocation_create_from_contract(request, id_contract):
+    """ Function based view to create a convocation. """
+    contract = get_object_or_404(Contract, pk=id_contract)
+    form = ConvocationFormWithContract(request.POST or None, error_class=ParagraphErrorList,
+                              initial={'contract': contract})
+    context = {
+        'eda_name': contract.eda.student.name,
+        'eda_vorname': contract.eda.student.vorname,
+        'eda_classe': contract.eda.classe,
+        'mentor_name': contract.mentor.student.name,
+        'mentor_vorname': contract.mentor.student.vorname,
+        'mentor_classe': contract.mentor.classe,
+        'discipline': contract.discipline.name
+    }
+    if form.is_valid():
+        convocation=form.save()
+        return redirect('pymentorat:convocation_pdf', id_convocation=convocation.pk)
+    context['form'] = form
+    return render(request,'pymentorat/convocation_form.html',context=context)
+
+
+@login_required
+def convocation_update(request, id_contract):
+    """ Function based view to edit a contract. """
+    contract = get_object_or_404(Contract, pk=id_contract)
+    form = ContractForm(request.POST or None, instance=contract, error_class=ParagraphErrorList,
+                       initial={'eda': contract.eda, 'mentor': contract.mentor})
+    context = {
+        'eda_name': contract.eda.student.name,
+        'eda_vorname': contract.eda.student.vorname,
+        'eda_classe': contract.eda.classe,
+        'year': contract.year,
+        'discipline': contract.discipline.name
+    }
+    if form.is_valid():
+        form.save()
+        return redirect('pymentorat:contract_list')
+    context['form'] = form
+    return render(request,'pymentorat/contract_form.html',context=context)
+
+
 ### Views for PDF rendering
 
 
@@ -263,15 +312,25 @@ def contract_update(request, id_contract):
 def contract_pdf(request, id_contract):
     contract = get_object_or_404(Contract, pk=id_contract)
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment;filename="test.pdf"'
+    filename = "contrat_mentorat_{0}_{1}.pdf".format(contract.eda.student.name, contract.mentor.student.name)
+    response['Content-Disposition'] = "attachment;filename={0}".format(filename)
 
     buffer = BytesIO()
 
+    registerFont(TTFont('Arial', 'pymentorat/static/fonts/Arial.ttf'))
+    registerFont(TTFont('Arial-Bold', 'pymentorat/static/fonts/Arial Bold.ttf'))
+
+    logo = ImageReader('pymentorat/static/img/logo_texte_adresse.png')
+    logo_scale = 0.1
+    logo_width = 1075*logo_scale
+    logo_height = 544*logo_scale
+
     p = canvas.Canvas(buffer, pagesize=landscape(A4))
     height, width  = A4
-    head = 2*cm
+    head = 2.5*cm
     foot = 2*cm
     left=1*cm
+
     right=2*cm
 
     def xpos(x):
@@ -283,81 +342,90 @@ def contract_pdf(request, id_contract):
     # p = canvas.Canvas(response, pagesize=landscape(A4))
     p.translate(0,height)
 
-    p.setFont("Helvetica-Bold", 18)
+    p.setFont("Arial-Bold", 18)
 
-    p.drawCentredString(width/4, ypos(0), "Contrat de Mentorat" )
+    p.drawImage(logo, xpos(0), ypos(0), logo_width, logo_height, anchor='sw', anchorAtXY=True, showBoundary=False)
 
-    p.line(xpos(0), ypos(1.5), width / 2 - 1 * cm, ypos(1.5))
+    p.drawCentredString(width/4, ypos(1), "Contrat de Mentorat" )
 
-    p.setFont("Helvetica-Bold", 12)
-    p.drawString(xpos(0), ypos(2), "Branche :")
-    p.setFont("Helvetica", 11)
-    p.drawString(xpos(5.5), ypos(2), "{branche}".format(branche=contract.discipline))
+    p.line(xpos(0), ypos(2), width / 2 - 1 * cm, ypos(2))
 
-    p.line(xpos(0), ypos(2.5), width / 2 - 1 * cm, ypos(2.5))
+    p.setFont("Arial-Bold", 12)
+    p.drawString(xpos(0), ypos(2.5), "Branche :")
+    p.setFont("Arial", 11)
+    p.drawString(xpos(5.5), ypos(2.5), "{branche}".format(branche=contract.discipline))
 
-    p.setFont("Helvetica-Bold", 12)
-    p.drawString(xpos(0), ypos(3), "Mentor : ")
+    p.line(xpos(0), ypos(3), width / 2 - 1 * cm, ypos(3))
 
-    p.setFont("Helvetica", 11)
-    p.drawString(xpos(5.5), ypos(3), "{nom} {prenom} ({classe})".format(nom=contract.mentor.student.name,
+    p.setFont("Arial-Bold", 12)
+    p.drawString(xpos(0), ypos(3.5), "Mentor : ")
+
+    p.setFont("Arial", 11)
+    p.drawString(xpos(5.5), ypos(3.5), "{nom} {prenom} ({classe})".format(nom=contract.mentor.student.name,
                                                                           prenom=contract.mentor.student.vorname,
                                                                           classe=contract.mentor.classe
                                                                          ))
 
-    p.setFont("Helvetica", 11)
-    p.drawString(xpos(1), ypos(4), "N° portable : {natel}".format(natel=contract.mentor.student.portable ))
-    p.drawString(xpos(5.5), ypos(4),"Email : {email}".format(email=contract.mentor.student.email))
+    p.setFont("Arial", 11)
+    p.drawString(xpos(1), ypos(4.5), "N° portable : {natel}".format(natel=contract.mentor.student.portable ))
+    p.drawString(xpos(5.5), ypos(4.5),"Email : {email}".format(email=contract.mentor.student.email))
 
-    p.line(xpos(0), ypos(4.5), width / 2 - 1 * cm, ypos(4.5))
+    p.line(xpos(0), ypos(5), width / 2 - 1 * cm, ypos(5))
 
-    p.setFont("Helvetica-Bold", 12)
-    p.drawString(xpos(0), ypos(5), "Demandeur d'aide (EAD) :")
-    p.setFont("Helvetica", 11)
-    p.drawString(xpos(5.5), ypos(5), "{nom} {prenom} ({classe})".format(nom=contract.eda.student.name,
+    p.setFont("Arial-Bold", 12)
+    p.drawString(xpos(0), ypos(5.5), "Demandeur d'aide :")
+    p.setFont("Arial", 11)
+    p.drawString(xpos(5.5), ypos(5.5), "{nom} {prenom} ({classe})".format(nom=contract.eda.student.name,
                                                                          prenom=contract.eda.student.vorname,
                                                                          classe=contract.eda.classe
                                                                          ))
-    p.setFont("Helvetica", 11)
-    p.drawString(xpos(1), ypos(6), "N° portable : {natel}".format(natel=contract.eda.student.portable))
-    p.drawString(xpos(5.5), ypos(6), "Email : {email}".format(email=contract.eda.student.email))
+    p.setFont("Arial", 11)
+    p.drawString(xpos(1), ypos(6.5), "N° portable : {natel}".format(natel=contract.eda.student.portable))
+    p.drawString(xpos(5.5), ypos(6.5), "Email : {email}".format(email=contract.eda.student.email))
 
 
 
-    p.line(xpos(0), ypos(6.5), width / 2 - 1 * cm, ypos(6.5))
+    p.line(xpos(0), ypos(7), width / 2 - 1 * cm, ypos(7))
 
-    p.drawString(xpos(0), ypos(7.5), "Date et lieu : Cheseaux-Noréaz, le ")
-    p.drawString(xpos(7.5), ypos(7.5), ".................................")
-    p.drawString(xpos(0), ypos(8.5), "Signature du mentor")
-    p.drawString(xpos(5.5), ypos(8.5), "...........................................")
+    p.drawString(xpos(0), ypos(8), "Date et lieu : Cheseaux-Noréaz, le ")
+    p.drawString(xpos(7.5), ypos(8), ".................................")
+    p.drawString(xpos(0), ypos(9), "Signature du mentor")
+    p.drawString(xpos(5.5), ypos(9), "...........................................")
 
-    p.drawString(xpos(0), ypos(9.5), "Signature du demandeur")
-    p.drawString(xpos(5.5), ypos(9.5), "...........................................")
+    p.drawString(xpos(0), ypos(10), "Signature du demandeur")
+    p.drawString(xpos(5.5), ypos(10), "...........................................")
 
-    p.line(xpos(0), ypos(10), width / 2 - 1 * cm, ypos(10))
+    p.line(xpos(0), ypos(10.5), width / 2 - 1 * cm, ypos(10.5))
 
-    p.setFont("Helvetica-Bold", 12)
-    p.drawString(xpos(0), ypos(11), "Signatures de la responsable du mentorat (S. Amy) :")
+    p.setFont("Arial-Bold", 12)
+    p.drawString(xpos(0), ypos(11.5), "Signatures de la responsable du mentorat (S. Amy) :")
 
-    p.setFont("Helvetica", 11)
-    p.drawString(xpos(0), ypos(12), "Avant première séance")
-    p.drawString(xpos(5.5), ypos(12), "...........................................")
+    p.setFont("Arial", 11)
+    p.drawString(xpos(0), ypos(12.5), "Avant la première séance")
+    p.drawString(xpos(5.5), ypos(12.5), "...........................................")
 
-    p.drawString(xpos(0), ypos(13), "Après dernière séance")
-    p.drawString(xpos(5.5), ypos(13), "...........................................")
-    p.line(width/2,0,width/2,-height)
+    p.drawString(xpos(0), ypos(13.5), "Après la dernière séance")
+    p.drawString(xpos(5.5), ypos(13.5), "...........................................")
+
+
 
     p.line(xpos(0), ypos(14), width / 2 - 1 * cm, ypos(14))
-    p.setFont("Helvetica-Bold", 11)
+    p.setFont("Arial-Bold", 11)
     p.drawString(xpos(0), ypos(15), "A remettre au secrétariat en fin de contrat, avec les deux signatures")
     p.drawString(xpos(0), ypos(15.5), "de la responsable, pour l'obtention de l'aide à la formation.")
 
+
+    # sepéaration
+    p.line(width / 2, -0.5*cm , width / 2, -height + 0.5*cm)
+
     # Page 2
-    p.setFont("Helvetica-Bold", 18)
+    head = 2 * cm
+
+    p.setFont("Arial-Bold", 18)
 
     p.drawCentredString(3*width / 4, ypos(0), "Fiche de suivi")
 
-    p.setFont("Helvetica", 11)
+    p.setFont("Arial", 11)
     p.drawCentredString(3 * width / 4, ypos(1), "A remplir à l'issue de chaque séance.")
 
     p.line(width / 2 + 1 * cm, ypos(1.5), width - 1 * cm, ypos(1.5))
@@ -375,7 +443,7 @@ def contract_pdf(request, id_contract):
     p.line(width / 2 + 11 * cm, ypos(1.5), width / 2 + 11 * cm, ypos(17.5))
     p.line(width - 1 * cm, ypos(1.5), width - 1 * cm, ypos(17.5))
 
-    p.setFont("Helvetica", 11)
+    p.setFont("Arial", 11)
     p.drawString(width / 2 + xpos(0.1), ypos(2), "Dates")
     p.drawString(width / 2 + xpos(1.6), ypos(2), "Sujets abordés")
     p.drawString(width / 2 + xpos(10.1), ypos(2), "Signatures")
@@ -385,6 +453,92 @@ def contract_pdf(request, id_contract):
     p.drawString(width / 2 + xpos(0.1), ypos(10.5), "4.")
     p.drawString(width / 2 + xpos(0.1), ypos(13), "5.")
     p.drawString(width / 2 + xpos(0.1), ypos(15.5), "6.")
+
+    p.showPage()
+    p.save()
+
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    response.write(pdf)
+
+    return response
+
+@login_required
+def convocation_pdf(request, id_convocation):
+    convocation = get_object_or_404(Convocation, pk=id_convocation)
+    response = HttpResponse(content_type='application/pdf')
+    filename = "convocation_mentorat_{0}_{1}.pdf".format(convocation.contract.eda.student.name,
+                                                   convocation.contract.mentor.student.name)
+    response['Content-Disposition'] = "attachment;filename={0}".format(filename)
+
+    eda = convocation.contract.eda
+    mentor = convocation.contract.mentor
+
+
+    buffer = BytesIO()
+
+    registerFont(TTFont('Arial', 'pymentorat/static/fonts/Arial.ttf'))
+    registerFont(TTFont('Arial-Bold', 'pymentorat/static/fonts/Arial Bold.ttf'))
+
+    logo = ImageReader('pymentorat/static/img/logo_texte_adresse.png')
+    logo_scale = 0.1
+    logo_width = 1075*logo_scale
+    logo_height = 544*logo_scale
+
+    p = canvas.Canvas(buffer, pagesize=landscape(A4))
+    height, width  = A4
+    head = 2.5*cm
+    foot = 2*cm
+    left=1*cm
+
+    right=2*cm
+
+
+
+    p.translate(0,height)
+
+    def page(dest, head, left):
+        def xpos(x):
+            return x * cm + left
+
+        def ypos(y):
+            return -y * cm - head
+
+        p.setFont("Arial-Bold", 18)
+
+        p.drawImage(logo, xpos(0), ypos(0), logo_width, logo_height, anchor='sw', anchorAtXY=True, showBoundary=False)
+
+        p.setFont("Arial", 10)
+        p.drawString(xpos(7), ypos(0), "Cheseaux-Noréaz, le {0}".format(date.today().strftime('%d.%m.%Y')))
+
+        p.setFont("Arial-Bold", 18)
+        p.drawCentredString(xpos(6.5), ypos(1.5), "Convocation" )
+
+        p.setFont("Arial", 18)
+        p.drawString(xpos(0), ypos(3), "{0} {1} ({2})".format(dest.student.vorname, dest.student.name, dest.classe))
+
+        p.setFont("Arial", 14)
+        p.drawString(xpos(0), ypos(5), "Concerne : Contrat de mentorat")
+
+        p.setFont("Arial", 14)
+        p.drawString(xpos(0), ypos(7), "Merci de vous présenter {0}".format(convocation.place.casefold()))
+        p.drawString(xpos(5.45), ypos(8), "le {0} à {1}".format(convocation.date.strftime('%d.%m.%Y'),
+                                                                convocation.time.strftime('%H:%M')))
+
+        p.drawString(xpos(0), ypos(10),"{0}".format(convocation.message))
+
+        p.drawCentredString(xpos(8), ypos(13), "Sandrine Amy")
+        p.drawCentredString(xpos(8), ypos(14), "Responsable du mentorat")
+
+    page(eda, head, left)
+
+    # sepéaration
+    p.line(width / 2, -0.5 * cm, width / 2, -height + 0.5 * cm)
+
+    # Page 2
+
+    page(mentor, head, width/2 + left)
 
     p.showPage()
     p.save()

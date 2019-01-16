@@ -1,6 +1,6 @@
-certifi==2018.8.24
-Django==2.1.5
-django-filter==2.0.0
-pytz==2018.5
+certifi
+Django
+django-filter
+pytz
 psycopg2-binary
 reportlab

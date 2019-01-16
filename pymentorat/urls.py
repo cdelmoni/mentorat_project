@@ -109,10 +109,20 @@ urlpatterns = [
         name='contract_simple_list'
     ),
     path(
-        'pdf/<int:id_contract>/',
+        'contract_print/<int:id_contract>/',
         views.contract_pdf,
         name='contract_pdf'
-    )
+    ),
+    path(
+        'convocation_create/<int:id_contract>/',
+        views.convocation_create_from_contract,
+        name='convocation_create'
+    ),
+    path(
+        'convocation_print/<int:id_convocation>/',
+        views.convocation_pdf,
+        name='convocation_pdf'
+    ),
     # For Class Based Views
     # path(
     #     'contrat/',
