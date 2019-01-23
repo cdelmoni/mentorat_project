@@ -1,0 +1,194 @@
+{% extends 'pymentorat/base.html' %}
+
+{% block buttons %}
+        <a href="{% url 'pymentorat:student_list' %}" class="btn btn-outline-secondary btn-sm" id="student_list_button">
+            Liste des élèves
+        </a>
+        <a href="{% url 'pymentorat:student_update' student_pk %}" class="btn btn-outline-secondary btn-sm" id="student_list_button">
+            <i class="fas fa-marker"></i> Modifier l'élève
+        </a>
+        <a href="{% url 'pymentorat:mentor_create_from_student' student_pk %}" class="btn btn-outline-secondary btn-sm" id="student_list_button">
+            <i class="fas fa-plus-circle"></i> Inscrire comme mentor
+        </a>
+        <a href="{% url 'pymentorat:eda_create_from_student' student_pk %}" class="btn btn-outline-secondary btn-sm" id="student_list_button">
+            <i class="fas fa-plus-square" ></i> Inscrire comme EDA
+        </a>
+{% endblock%}
+
+
+
+{% block content %}
+    <div class="container text-center">
+        <h3>Elève : {{student_vorname}} {{student_name}}</h3>
+        <p>Classe actuelle : {{current_classe}}</p>
+        <p>Email : {{student_email}}</p>
+        <p>Portable : {{student_portable}}</p>
+        <p>Téléphone : {{student_tel}}</p>
+    </div>
+
+        <br><hr>
+
+    <h4>Demandes d'aide :</h4>
+
+    {% if edas %}
+
+        <table class="table table-striped table-hover">
+            <tr>
+                <th>Demandeur</th>
+                <th>Discipline</th>
+                <th>Classe</th>
+                <th>Maître</th>
+                <th>Date d'inscription</th>
+                <th>Actions</th>
+            </tr>
+            {% for eda in edas %}
+            <tr>
+                <td>
+                    {{eda.student.name}} {{eda.student.vorname}}
+                </td>
+                <td>
+                    {{eda.discipline}}
+                </td>
+                <td>
+                    {{eda.classe}}
+                </td>
+                 <td>
+                    {{eda.teacher}}
+                </td>
+                <td>
+                    {{eda.inscription_date | date:"d F Y"}}
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:eda_update' eda.pk %}">
+                        <i class="fas fa-marker" title="Modifier la demande d'aide"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:contract_create' eda.pk %}">
+                        <i class="far fa-folder-plus" title="Nouveau contrat"></i>
+                    </a>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        Aucune demande d'aide trouvée.
+    {% endif %}
+
+    <br><hr>
+
+    <h4>Inscriptions comme mentor :</h4>
+
+    {% if mentors %}
+        <table class="table table-striped table-hover">
+            <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Discipline</th>
+                <th>Classe</th>
+                <th>Maître</th>
+                <th>Année</th>
+                <th>Nb contrats</th>
+                <th>Actions</th>
+            </tr>
+            {% for mentor in mentors %}
+            <tr>
+                <td>
+                    {{mentor.student.name}}
+                </td>
+                <td>
+                    {{mentor.student.vorname}}
+                </td>
+                <td>
+                    {{mentor.discipline}}
+                </td>
+                <td>
+                    {{mentor.classe}}
+                </td>
+                 <td>
+                    {{mentor.teacher}}
+                </td>
+                <td>
+                    {{mentor.year}}
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:mentor_details' mentor.pk %}">
+                        <span class="badge badge-pill badge-primary" title="Nb. contrats">
+                            {{mentor.get_nb_contracts}}
+                        </span>
+                    </a>
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:mentor_update' mentor.pk %}">
+                        <i class="fas fa-marker" title="Modifier le mentor"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        Aucune inscription comme mentor trouvée.
+    {% endif %}
+
+    <br><hr>
+
+    <h4>Liste des contrats :</h4>
+
+    {% if contracts %}
+
+        <table class="table table-striped table-hover">
+            <tr>
+                <th>EDA</th>
+                <th>Mentor</th>
+                <th>Discipline</th>
+                <th>Date de début</th>
+                <th>Date de fin</th>
+                <th>Actions</th>
+            </tr>
+            {% for contract in contracts %}
+            <tr>
+                <td>
+                    {{contract.eda.student}} ({{contract.eda.classe}})
+                    <a href="{% url 'pymentorat:eda_details' contract.eda.pk %}">
+                        <i class="fas fa-info-circle" title="Ouvrir détails du demandeur"></i>
+                    </a>
+                </td>
+                <td>
+                    {{contract.mentor.student}} ({{contract.mentor.classe}})
+                    <a href="{% url 'pymentorat:mentor_details' contract.mentor.pk %}">
+                        <i class="fas fa-info-circle" title="Ouvrir détails du mentor"></i>
+                    </a>
+                </td>
+                <td>
+                    {{contract.discipline}}
+                </td>
+                <td>
+                    {{contract.begin_date | date:" d F Y"}}
+                </td>
+                 <td>
+                    {{contract.end_date | date:"d F Y"}}
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:contract_update' contract.pk %}">
+                        <i class="fas fa-marker" title="Modifier le contrat"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:contract_pdf' contract.pk %}">
+                        <i class="fas fa-print" title="Imprimer le contrat"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:convocation_create' contract.pk %}">
+                        <i class="far fa-calendar-plus" title="Créer une convocation"></i>
+                    </a>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        Aucun contrat trouvé.
+    {% endif %}
+
+
+
+{% endblock%}
