@@ -21,9 +21,10 @@ class Student(TimeStampedModel):
     name = models.CharField('Nom', max_length=50)
     vorname = models.CharField('Prénom', max_length=50)
     email = models.EmailField('E-mail', null=True, blank=True)
-    tel = models.CharField('Téléphone', max_length=13, null=True, blank=True)
     portable = models.CharField('Portable', max_length=13, null=True, blank=True)
+    tel = models.CharField('Téléphone', max_length=13, null=True, blank=True)
     id_OD = models.CharField(max_length=8, unique=True)
+    current_classe = models.CharField('Classe actuelle', max_length=12, null=True, blank=True)
 
     def __str__(self):
         return "{0} {1}".format(self.name, self.vorname)
@@ -31,6 +32,9 @@ class Student(TimeStampedModel):
     class Meta:
         verbose_name = "Elève"
         verbose_name_plural = "Elèves"
+
+    def get_absolute_url(self):
+        return reverse('pymentorat:student_details', kwargs={'id_student': self.pk})
 
 
 class Teacher(TimeStampedModel):
@@ -77,6 +81,10 @@ class Mentor(TimeStampedModel):
     def get_absolute_url(self):
         return reverse('pymentorat:mentor_update', kwargs={'id_mentor': self.pk})
 
+    def get_nb_contracts(self):
+        nb = Contract.objects.filter(mentor=self, end_date=None).count()
+        return nb
+
 
 class EDA(TimeStampedModel):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -107,6 +115,10 @@ class EDA(TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse('pymentorat:eda_update', kwargs={'id_eda': self.pk})
+
+    def get_nb_contracts(self):
+        nb = Contract.objects.filter(eda=self, end_date=None).count()
+        return nb
 
 
 class Contract(TimeStampedModel):

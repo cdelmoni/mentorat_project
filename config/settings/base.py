@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'import_export',
 ]
 
 MIDDLEWARE = [
@@ -99,6 +100,7 @@ def FILTERS_VERBOSE_LOOKUPS():
     return verbose_lookups
 
 
+IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 
 # Password validation

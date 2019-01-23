@@ -1,5 +1,9 @@
 {% extends 'pymentorat/base.html' %}
 
+{% block buttons %}
+
+{% endblock%}
+
 {% block content %}
     <h3>Listes des élèves</h3>
 
@@ -15,13 +19,12 @@
             <tr>
                 <th>Nom</th>
                 <th>Prénom</th>
+                <th>Classe</th>
                 <th>Email</th>
                 <th>Téléphone</th>
                 <th>Portable</th>
                 <th>id</th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <th>Actions</th>
             </tr>
             {% for student in filter.qs %}
             <tr>
@@ -30,6 +33,9 @@
                 </td>
                 <td>
                     {{student.vorname}}
+                </td>
+                <td>
+                    {{student.current_classe}}
                 </td>
                 <td>
                     {{student.email}}
@@ -44,13 +50,21 @@
                     {{student.id_OD}}
                 </td>
                 <td>
-                    <a href="{% url 'pymentorat:student_update' student.pk %}">modifier</a>
-                </td>
-                <td>
-                    <a href="{% url 'pymentorat:mentor_create_from_student' student.pk %}">+ mentor</a>
-                </td>
-                <td>
-                    <a href="{% url 'pymentorat:eda_create_from_student' student.pk %}">+ EDA</a>
+                    <a href="{% url 'pymentorat:student_details' student.pk %}">
+                        <i class="fas fa-info-circle" title="Ouvrir détails de l'élève"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:student_update' student.pk %}">
+                        <i class="fas fa-marker" title="Modifier l'élève"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:mentor_create_from_student' student.pk %}">
+                        <i class="fas fa-plus-circle" title="Inscrire nouveau mentor"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:eda_create_from_student' student.pk %}">
+                        <i class="fas fa-plus-square" title="Inscrire nouveau demandeur"></i>
+                    </a>
                 </td>
 
             </tr>

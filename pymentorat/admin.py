@@ -1,19 +1,20 @@
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
 from .models import Discipline, Student, Teacher, Mentor, EDA, Contract, Convocation
 
-@admin.register(Discipline)
-class DisciplineAdmin(admin.ModelAdmin):
-    pass
+# @admin.register(Discipline)
+# class DisciplineAdmin(admin.ModelAdmin):
+#     pass
 
 
-@admin.register(Student)
-class StudentAdmin(admin.ModelAdmin):
-    pass
+# @admin.register(Student)
+# class StudentAdmin(admin.ModelAdmin):
+#     pass
 
 
-@admin.register(Teacher)
-class TeacherAdmin(admin.ModelAdmin):
-    pass
+# @admin.register(Teacher)
+# class TeacherAdmin(admin.ModelAdmin):
+#     pass
 
 @admin.register(EDA)
 class EDAAdmin(admin.ModelAdmin):
@@ -29,4 +30,16 @@ class ContractAdmin(admin.ModelAdmin):
 
 @admin.register(Convocation)
 class ConvocationAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Discipline)
+class DisciplineAdmin(ImportExportModelAdmin):
+    pass
+
+@admin.register(Student)
+class StudentAdmin(ImportExportModelAdmin):
+    pass
+
+@admin.register(Teacher)
+class TeacherAdmin(ImportExportModelAdmin):
     pass

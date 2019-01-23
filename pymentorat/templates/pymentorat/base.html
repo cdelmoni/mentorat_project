@@ -19,6 +19,8 @@
         <!-- custom CSS -->
         <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}" />
 
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
     </head>
     <body>
 
@@ -67,8 +69,21 @@
             <!-- Page Content -->
             <div id="page-content-wrapper">
                 <div class="container-fluid">
-                    <a href="#menu-toggle" class="btn btn-secondary" id="menu-toggle">Menu</a>
-                    <h1>Mentorat GYYV</h1>
+                    <div class="row">
+                        <div class="col-1">
+                            <a href="#menu-toggle" class="btn btn-secondary" id="menu-toggle">Menu</a>
+                        </div>
+                        <div class="col-4">
+                            <h2>Mentorat GYYV</h2>
+                        </div>
+                        <div class="col-7", align="right">
+                            {% block buttons %} {% endblock %}
+                        </div>
+                    </div>
+
+                    <br>
+
+
                     {% block content %} {% endblock %}
 
                 </div>
