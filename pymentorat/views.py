@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.http import HttpResponse
+from django.db.models import Q
 
 
 from reportlab.pdfgen import canvas
@@ -46,6 +47,26 @@ def student_filter_list(request):
     student_filter = StudentFilter(request.GET, queryset=student_list)
     return render(request, 'pymentorat/student_list.html', {'filter': student_filter})
 
+@login_required
+def student_details(request, id_student):
+    """ Function based view to edit an EDA. """
+    student = get_object_or_404(Student, pk=id_student)
+    contract_list = Contract.objects.filter(Q(mentor__student=student) | Q(eda__student=student), year=CURRENT_YEAR)
+    mentor_list = Mentor.objects.filter(student=student, year=CURRENT_YEAR)
+    eda_list = EDA.objects.filter(student=student, year=CURRENT_YEAR)
+    context = {
+        'student_pk' : student.pk,
+        'student_name': student.name,
+        'student_vorname': student.vorname,
+        'student_portable' : student.portable,
+        'student_email': student.email,
+        'current_classe': student.current_classe,
+        'contracts': contract_list,
+        'mentors' : mentor_list,
+        'edas' : eda_list
+    }
+
+    return render(request,'pymentorat/student_details.html', context)
 
 @login_required
 def student_update(request, id_student):
@@ -56,12 +77,13 @@ def student_update(request, id_student):
         'student_name': student.name,
         'student_vorname' : student.vorname,
         'student_id' : student.id_OD,
+        'student_current_classe' : student.current_classe
     }
     if form.is_valid():
         form.save()
-        return redirect('pymentorat:student_list')
+        return redirect(student.get_absolute_url())
     context['form'] = form
-    return render(request,'pymentorat/student_form.html',context)
+    return render(request,'pymentorat/student_form.html', context)
 
 
 # Views for teachers
@@ -92,6 +114,24 @@ def mentor_filter_list(request):
     mentor_filter = MentorFilter(request.GET, queryset=mentor_list)
     return render(request, 'pymentorat/mentor_list.html', {'filter': mentor_filter})
 
+@login_required
+def mentor_details(request, id_mentor):
+    """ Function based view to edit an EDA. """
+    mentor = get_object_or_404(Mentor, pk=id_mentor)
+    contract_list = Contract.objects.filter(mentor=mentor, year=CURRENT_YEAR)
+    context = {
+        'mentor_pk' : mentor.pk,
+        'mentor_name': mentor.student.name,
+        'mentor_vorname': mentor.student.vorname,
+        'mentor_portable' : mentor.student.portable,
+        'mentor_classe': mentor.classe,
+        'mentor_discipline' : mentor.discipline,
+        'teacher_name': mentor.teacher.name,
+        'teacher_vorname': mentor.teacher.vorname,
+        'contracts': contract_list
+    }
+
+    return render(request,'pymentorat/mentor_details.html', context)
 
 @login_required
 def mentor_create(request):
@@ -112,7 +152,7 @@ def mentor_create_from_student(request, id_student):
     student = get_object_or_404(Student, pk=id_student)
 
     form = MentorFormWithStudent(request.POST or None, error_class=ParagraphErrorList,
-                              initial={'student': student})
+                              initial={'student': student, 'classe': student.current_classe})
     context = {
         'student_name': student.name,
         'student_vorname': student.vorname,
@@ -166,6 +206,24 @@ def eda_filter_nomentor_list(request):
     }
     return render(request, 'pymentorat/eda_list.html', context)
 
+@login_required
+def eda_details(request, id_eda):
+    """ Function based view to edit an EDA. """
+    eda = get_object_or_404(EDA, pk=id_eda)
+    contract_list = Contract.objects.filter(eda=eda, year=CURRENT_YEAR)
+    context = {
+        'eda_pk' : eda.pk,
+        'eda_name': eda.student.name,
+        'eda_vorname': eda.student.vorname,
+        'eda_portable' : eda.student.portable,
+        'eda_classe': eda.classe,
+        'eda_discipline' : eda.discipline,
+        'teacher_name': eda.teacher.name,
+        'teacher_vorname': eda.teacher.vorname,
+        'contracts': contract_list
+    }
+
+    return render(request,'pymentorat/eda_details.html', context)
 
 @login_required
 def eda_create(request):
@@ -186,7 +244,7 @@ def eda_create_from_student(request, id_student):
     student = get_object_or_404(Student, pk=id_student)
 
     form = EDAFormWithStudent(request.POST or None, error_class=ParagraphErrorList,
-                              initial={'student': student})
+                              initial={'student': student, 'classe': student.current_classe})
     context = {
         'student_name': student.name,
         'student_vorname': student.vorname,
@@ -228,7 +286,8 @@ def contract_create_from_eda(request, id_eda):
     """ Function based view to create a contract. """
     eda = get_object_or_404(EDA, pk=id_eda)
     form = ContractFormWithEDA(request.POST or None, error_class=ParagraphErrorList,
-                              initial={'eda': eda, 'discipline': eda.discipline})
+                               discipline_id=eda.discipline.pk,
+                               initial={'eda': eda, 'discipline': eda.discipline})
     context = {
         'eda_name': eda.student.name,
         'eda_vorname': eda.student.vorname,
@@ -347,6 +406,9 @@ def contract_pdf(request, id_contract):
     p.drawImage(logo, xpos(0), ypos(0), logo_width, logo_height, anchor='sw', anchorAtXY=True, showBoundary=False)
 
     p.drawCentredString(width/4, ypos(1), "Contrat de Mentorat" )
+
+    p.setFont("Arial", 9)
+    p.drawCentredString(width / 4, ypos(1.5), "(A conserver en parfait état)")
 
     p.line(xpos(0), ypos(2), width / 2 - 1 * cm, ypos(2))
 
@@ -526,7 +588,8 @@ def convocation_pdf(request, id_convocation):
         p.drawString(xpos(5.45), ypos(8), "le {0} à {1}".format(convocation.date.strftime('%d.%m.%Y'),
                                                                 convocation.time.strftime('%H:%M')))
 
-        p.drawString(xpos(0), ypos(10),"{0}".format(convocation.message))
+        if (convocation.message != None):
+            p.drawString(xpos(0), ypos(10),"{0}".format(convocation.message))
 
         p.drawCentredString(xpos(8), ypos(13), "Sandrine Amy")
         p.drawCentredString(xpos(8), ypos(14), "Responsable du mentorat")

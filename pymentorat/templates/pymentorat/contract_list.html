@@ -1,5 +1,14 @@
 {% extends 'pymentorat/base.html' %}
 
+{% block buttons %}
+        <a href="{% url 'pymentorat:mentor_list' %}" class="btn btn-outline-secondary btn-sm" id="mentor_list_button">
+            Liste des mentors
+        </a>
+        <a href="{% url 'pymentorat:eda_list' %}" class="btn btn-outline-secondary btn-sm" id="eda_list_button">
+            Liste des demandeurs
+        </a>
+{% endblock%}
+
 {% block content %}
     <h3>Listes des contrats</h3>
 
@@ -19,17 +28,21 @@
                 <th>Discipline</th>
                 <th>Date de début</th>
                 <th>Date de fin</th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <th>Actions</th>
             </tr>
             {% for contract in filter.qs %}
             <tr>
                 <td>
-                    <a href="#">{{contract.eda.student}}</a>
+                    {{contract.eda.student}}
+                    <a href="{% url 'pymentorat:eda_details' contract.eda.pk %}" >
+                        <i class="fas fa-info-circle" title="Ouvrir détails du demandeur"></i>
+                    </a>
                 </td>
                 <td>
-                    <a href="#">{{contract.mentor.student}}</a>
+                    {{contract.mentor.student}}
+                    <a href="{% url 'pymentorat:mentor_details' contract.mentor.pk %}" >
+                        <i class="fas fa-info-circle" title="Ouvrir détails du mentor"></i>
+                    </a>
                 </td>
                 <td>
                     {{contract.discipline}}
@@ -41,13 +54,17 @@
                     {{contract.end_date | date:"d F Y"}}
                 </td>
                 <td>
-                    <a href="{% url 'pymentorat:contract_update' contract.pk %}">modifier</a>
-                </td>
-                <td>
-                    <a href="{% url 'pymentorat:contract_pdf' contract.pk %}">PDF</a>
-                </td>
-                <td>
-                    <a href="{% url 'pymentorat:convocation_create' contract.pk %}">convoc.</a>
+                    <a href="{% url 'pymentorat:contract_update' contract.pk %}">
+                        <i class="fas fa-marker" title="Modifier le contrat"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:contract_pdf' contract.pk %}">
+                        <i class="fas fa-print" title="Imprimer le contrat"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:convocation_create' contract.pk %}">
+                        <i class="far fa-calendar-plus" title="Créer une convocation"></i>
+                    </a>
                 </td>
 
             </tr>

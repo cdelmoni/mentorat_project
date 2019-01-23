@@ -25,6 +25,11 @@ urlpatterns = [
         name='student_list'
     ),
     path(
+        'student/<int:id_student>/',
+        views.student_details,
+        name='student_details'
+    ),
+    path(
         'student_update/<int:id_student>/',
         views.student_update,
         name='student_update'
@@ -45,6 +50,11 @@ urlpatterns = [
         'mentors/',
         views.mentor_filter_list,
         name='mentor_list'
+    ),
+    path(
+        'mentor/<int:id_mentor>/',
+        views.mentor_details,
+        name='mentor_details'
     ),
     path(
         'mentor_create/',
@@ -71,6 +81,11 @@ urlpatterns = [
         'eda_nomentor/',
         views.eda_filter_nomentor_list,
         name='eda_nomentor_list'
+    ),
+    path(
+        'eda/<int:id_eda>/',
+        views.eda_details,
+        name='eda_details'
     ),
     path(
         'eda_create/',

@@ -1,10 +1,17 @@
 {% extends 'pymentorat/base.html' %}
 
+{% block buttons %}
+        <a href="{% url 'pymentorat:mentor_create' %}" class="btn btn-outline-secondary btn-sm" id="new_mentor">
+            <i class="fas fa-plus-circle"></i> Nouveau mentor
+        </a>
+        <a href="{% url 'pymentorat:student_list' %}" class="btn btn-outline-secondary btn-sm" id="student_list">
+            Liste des élèves
+        </a>
+{% endblock%}
+
 {% block content %}
     <h3>Listes des mentors</h3>
 
-    <a href="{% url 'pymentorat:mentor_create' %}" class="btn btn-secondary" id="new-eda">Nouveau Mentor</a>
-    <a href="{% url 'pymentorat:student_list' %}" class="btn btn-secondary" id="student-list">Liste des élèves</a>
 
     <div class="container text-center">
     <form class="form-inline" method="get">
@@ -19,15 +26,17 @@
                 <th>Prénom</th>
                 <th>Discipline</th>
                 <th>Classe</th>
-                <th>Maître</th>
-                <th>Année</th>
-                <th></th>
-                <th></th>
+                <th>Maître de branche</th>
+                <th>Nb contrats</th>
+                <th>Actions</th>
             </tr>
             {% for mentor in filter.qs %}
             <tr>
                 <td>
                     {{mentor.student.name}}
+                    <a href="{% url 'pymentorat:student_details' mentor.student.pk %}" >
+                        <i class="fas fa-info-circle" title="Ouvrir détails de l'élève"></i>
+                    </a>
                 </td>
                 <td>
                     {{mentor.student.vorname}}
@@ -42,13 +51,22 @@
                     {{mentor.teacher}}
                 </td>
                 <td>
-                    {{mentor.year}}
+                    <span class="badge badge-pill badge-primary" title="Nb. contrats">
+                        {{mentor.get_nb_contracts}}
+                    </span>
                 </td>
                 <td>
-                    <a href="{% url 'pymentorat:mentor_update' mentor.pk %}">modifier</a>
-                </td>
-                <td>
-                    <a href="{% url 'pymentorat:mentor_create_from_student' mentor.student.pk %}">+ mentor</a>
+                    <a href="{% url 'pymentorat:mentor_details' mentor.pk %}">
+                        <i class="fas fa-info-circle" title="Ouvrir détails du mentor"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:mentor_update' mentor.pk %}">
+                        <i class="fas fa-marker" title="Modifier le mentor"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:mentor_create_from_student' mentor.student.pk %}">
+                        <i class="fas fa-plus-circle" title="Nouveau mentor"></i>
+                    </a>
                 </td>
 
             </tr>

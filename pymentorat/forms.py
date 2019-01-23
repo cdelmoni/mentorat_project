@@ -16,6 +16,19 @@ class ParagraphErrorList(ErrorList):
         return '<div class="errorlist">%s</div>' % ''.join(['<p class="small_error">%s</p>' % e for e in self])
 
 
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ['current_classe', 'email', 'portable', 'tel']
+        readonly_fields = ['name', 'vorname', 'id_OD']
+
+
+class TeacherForm(forms.ModelForm):
+    class Meta:
+        model = Teacher
+        fields = '__all__'
+
+
 class MentorForm(forms.ModelForm):
     class Meta:
         model = Mentor
@@ -90,22 +103,11 @@ class EDAFormWithStudent(forms.ModelForm):
         ]
 
 
-class StudentForm(forms.ModelForm):
-    class Meta:
-        model = Student
-        fields = ['email', 'tel', 'portable']
-        readonly_fields = ['name', 'vorname', 'id_OD']
-
-class TeacherForm(forms.ModelForm):
-    class Meta:
-        model = Teacher
-        fields = '__all__'
 
 
+# Forms for contracts
 class ContractForm(forms.ModelForm):
-
-    #discipline = forms.ModelChoiceField(queryset=Discipline.objects.all(), disabled=True)
-
+    """ Form to create a contract """
     class Meta:
         model = Contract
 
@@ -130,9 +132,17 @@ class ContractForm(forms.ModelForm):
             'year'
         ]
 
-class ContractFormWithEDA(forms.ModelForm):
 
+class ContractFormWithEDA(forms.ModelForm):
+    """ Form to create a contract with data of an EDA """
     discipline = forms.HiddenInput()
+
+    def __init__(self, *args, **kwargs):
+        discipline_id = kwargs.pop('discipline_id', None)
+        super(ContractFormWithEDA, self).__init__(*args, **kwargs)
+
+        if discipline_id:
+            self.fields['mentor'].queryset = Mentor.objects.filter(discipline_id=discipline_id, year=CURRENT_YEAR)
 
     class Meta:
         model = Contract
@@ -164,9 +174,9 @@ class ContractFormWithEDA(forms.ModelForm):
             'year'
         ]
 
-
+# Forms for convocations
 class ConvocationFormWithContract(forms.ModelForm):
-
+    """ Form to create a convocation from a contract """
     contract = forms.HiddenInput()
 
     class Meta:

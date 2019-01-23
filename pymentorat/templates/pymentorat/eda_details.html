@@ -1,0 +1,73 @@
+{% extends 'pymentorat/base.html' %}
+
+{% block buttons %}
+        <a href="{% url 'pymentorat:eda_list' %}" class="btn btn-outline-secondary btn-sm" id="eda_list_button">
+            Liste des demandeurs
+        </a>
+        <a href="{% url 'pymentorat:eda_update' eda_pk %}" class="btn btn-outline-secondary btn-sm" id="student_list_button">
+            Modifier le demandeur
+        </a>
+        <a href="{% url 'pymentorat:contract_create' eda_pk %}" class="btn btn-outline-secondary btn-sm" id="student_list_button">
+            Créer un contrat
+        </a>
+{% endblock%}
+
+{% block content %}
+
+    <div class="container text-center">
+        <h3>Demandeur d'aide</h3>
+        <h5> Elève : <a href="{% url 'pymentorat:student_details' eda_pk %}">{{eda_vorname}} {{eda_name}} ({{eda_classe}})</a></h5>
+        <h5> Branche : {{eda_discipline}}</h5>
+        <p>Maître de branche : {{teacher_vorname}} {{teacher_name}}</p>
+        <p>Remarque :</p>
+        <p>{{remark}}</p>
+
+    </div>
+
+{% if contracts %}
+        <h4>Liste des contrats :</h4>
+        <table class="table table-striped table-hover">
+            <tr>
+                <th>EDA</th>
+                <th>Mentor</th>
+                <th>Discipline</th>
+                <th>Date de début</th>
+                <th>Date de fin</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            {% for contract in contracts %}
+            <tr>
+                <td>
+                    {{contract.eda.student}}
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:mentor_details' contract.mentor.pk %}">{{contract.mentor.student}} ({{contract.mentor.classe}})</a>
+                </td>
+                <td>
+                    {{contract.discipline}}
+                </td>
+                <td>
+                    {{contract.begin_date | date:" d F Y"}}
+                </td>
+                 <td>
+                    {{contract.end_date | date:"d F Y"}}
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:contract_update' contract.pk %}">modifier</a>
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:contract_pdf' contract.pk %}"><span class="glyphicon glyphicon-print"></span>PDF</a>
+                </td>
+                <td>
+                    <a href="{% url 'pymentorat:convocation_create' contract.pk %}">convoc.</a>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        Aucun contrat trouvé pour .
+    {% endif %}
+{% endblock%}

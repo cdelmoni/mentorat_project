@@ -1,10 +1,17 @@
 {% extends 'pymentorat/base.html' %}
 
+{% block buttons %}
+        <a href="{% url 'pymentorat:eda_create' %}" class="btn btn-outline-secondary btn-sm" id="new_eda">
+            <i class="fas fa-plus-square"></i> Nouveau demandeur
+        </a>
+        <a href="{% url 'pymentorat:student_list' %}" class="btn btn-outline-secondary btn-sm" id="student_list">
+            Liste des élèves
+        </a>
+{% endblock%}
+
 {% block content %}
     <h3>{{ title }}</h3>
 
-    <a href="{% url 'pymentorat:eda_create' %}" class="btn btn-secondary" id="new-eda">Nouveau EDA</a>
-    <a href="{% url 'pymentorat:student_list' %}" class="btn btn-secondary" id="student-list">Liste des élèves</a>
 
     <div class="container text-center">
         <form class="form-inline" method="get">
@@ -23,13 +30,16 @@
                 <th>Classe</th>
                 <th>Maître</th>
                 <th>Date d'inscription</th>
-                <th></th>
-                <th></th>
+                <th>Nb contrats</th>
+                <th>Actions</th>
             </tr>
             {% for eda in filter.qs %}
             <tr>
                 <td>
                     {{eda.student.name}}
+                    <a href="{% url 'pymentorat:student_details' eda.student.pk %}" >
+                        <i class="fas fa-info-circle" title="Ouvrir détails de l'élève"></i>
+                    </a>
                 </td>
                 <td>
                     {{eda.student.vorname}}
@@ -47,13 +57,22 @@
                     {{eda.inscription_date | date:"d F Y"}}
                 </td>
                 <td>
-                    <a href="{% url 'pymentorat:eda_update' eda.pk %}">modifier</a>
+                    <span class="badge badge-pill badge-primary" title="Nb. contrats">
+                        {{eda.get_nb_contracts}}
+                    </span>
                 </td>
                 <td>
-                    <a href="{% url 'pymentorat:eda_create_from_student' eda.student.pk %}">+ EDA</a>
-                </td>
-                <td>
-                    <a href="{% url 'pymentorat:contract_create' eda.pk %}">+ Contrat</a>
+                    <a href="{% url 'pymentorat:eda_details' eda.pk %}">
+                        <i class="fas fa-info-circle" title="Ouvrir détails du demandeur"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:eda_update' eda.pk %}">
+                        <i class="fas fa-marker" title="Modifier le demandeur"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:contract_create' eda.pk %}">
+                        <i class="fas fa-folder-plus" title="Nouveau contrat"></i>
+                    </a>
                 </td>
 
             </tr>
