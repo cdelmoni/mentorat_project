@@ -23,8 +23,8 @@ class Student(TimeStampedModel):
     email = models.EmailField('E-mail', null=True, blank=True)
     portable = models.CharField('Portable', max_length=13, null=True, blank=True)
     tel = models.CharField('Téléphone', max_length=13, null=True, blank=True)
-    id_OD = models.CharField(max_length=8, unique=True)
-    current_classe = models.CharField('Classe actuelle', max_length=12, null=True, blank=True)
+    id_OD = models.CharField(max_length=10, unique=True)
+    classe = models.CharField('Classe actuelle', max_length=12, null=True, blank=True)
 
     def __str__(self):
         return "{0} {1}".format(self.name, self.vorname)
@@ -55,7 +55,6 @@ class Mentor(TimeStampedModel):
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     year = models.PositiveIntegerField('Année', default=CURRENT_YEAR)
-    classe = models.CharField('Classe', max_length=12)
     inscription_date = models.DateTimeField("Date d'inscription", auto_now_add=True)
     remark = models.TextField('Remarque', null=True, blank=True)
     is_active = models.BooleanField('Actif', default=True, null=False, blank=False)
@@ -71,12 +70,11 @@ class Mentor(TimeStampedModel):
         count_same_mentors = Mentor.objects.filter(year=CURRENT_YEAR,
                                                    student=self.student,
                                                    discipline=self.discipline).count()
-        if (count_same_mentors != 0):
+        if count_same_mentors != 0:
             raise ValidationError(
                 "Ce mentor existe déjà !",
-                code='mentor_not_unique'
+                code='eda_not_unique'
             )
-
 
     def get_absolute_url(self):
         return reverse('pymentorat:mentor_update', kwargs={'id_mentor': self.pk})
@@ -91,7 +89,6 @@ class EDA(TimeStampedModel):
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     year = models.PositiveIntegerField('Année', default=CURRENT_YEAR)
-    classe = models.CharField('Classe', max_length=12)
     inscription_date = models.DateTimeField("Date d'inscription", auto_now_add=True)
     remark = models.TextField('Remarque', null=True, blank=True)
     is_active = models.BooleanField('Actif', default=True, null=False, blank=False)
@@ -105,8 +102,8 @@ class EDA(TimeStampedModel):
 
     def clean(self):
         count_same_edas = EDA.objects.filter(year=CURRENT_YEAR,
-                                                   student=self.student,
-                                                   discipline=self.discipline).count()
+                                             student=self.student,
+                                             discipline=self.discipline).count()
         if (count_same_edas != 0):
             raise ValidationError(
                 "Cet EDA existe déjà !",

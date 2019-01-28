@@ -8,14 +8,14 @@
         {% if status == 'new' %}
         <h3>Nouvelle inscription de mentor</h3>
         {% else %}
-        <h3>Modifier inscription mentor</h3>
+        <h3>Modifier l'inscription du mentor</h3>
         {% endif %}
-        <h5> Elève : {{student_vorname}} {{student_name}}</h5>
+        <h3> {{student_vorname}} {{student_name}} ({{student_classe}})</h3>
     <form  method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="submit" value="Sauver">
         <button onclick="window.history.back()" type="button">Annuler</button>
     </form>
-
+    </div>
 {% endblock%}

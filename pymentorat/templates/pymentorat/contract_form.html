@@ -1,11 +1,17 @@
 {% extends 'pymentorat/base.html' %}
 
 {% block content %}
-    <h3>Modifier le contrat</h3>
+    {% if status == 'new' %}
+        <h3>Nouveau contrat</h3>
+        {% else %}
+        <h3>Mettre à jour le contrat</h3>
+        {% endif %}
 
 
     <div class="container text-center">
         <h5> Demandeur : {{eda_vorname}} {{eda_name}} ({{eda_classe}}) - {{discipline}}</h5>
+        <h5> Mentor : {{mentor_vorname}} {{mentor_name}} ({{mentor_classe}}) - {{discipline}}</h5>
+        <p> Date de début du contrat : {{begin_date}}</p>
         <form  method="post">
             {% csrf_token %}
             {{ form.as_p }}

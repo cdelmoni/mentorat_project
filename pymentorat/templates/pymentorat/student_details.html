@@ -20,7 +20,7 @@
 {% block content %}
     <div class="container text-center">
         <h3>Elève : {{student_vorname}} {{student_name}}</h3>
-        <p>Classe actuelle : {{current_classe}}</p>
+        <p>Classe actuelle : {{classe}}</p>
         <p>Email : {{student_email}}</p>
         <p>Portable : {{student_portable}}</p>
         <p>Téléphone : {{student_tel}}</p>
@@ -50,7 +50,7 @@
                     {{eda.discipline}}
                 </td>
                 <td>
-                    {{eda.classe}}
+                    {{eda.student.classe}}
                 </td>
                  <td>
                     {{eda.teacher}}
@@ -103,7 +103,7 @@
                     {{mentor.discipline}}
                 </td>
                 <td>
-                    {{mentor.classe}}
+                    {{mentor.student.classe}}
                 </td>
                  <td>
                     {{mentor.teacher}}
