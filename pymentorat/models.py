@@ -40,7 +40,7 @@ class Student(TimeStampedModel):
 class Teacher(TimeStampedModel):
     name = models.CharField('Nom', max_length=50)
     vorname = models.CharField('Prénom', max_length=50)
-    id_OD = models.CharField(max_length=8, unique=True, null=True)
+    id_OD = models.CharField(max_length=10, unique=True, null=True)
 
     def __str__(self):
         return "{0} {1}".format(self.name, self.vorname)
