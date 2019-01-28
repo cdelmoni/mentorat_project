@@ -1,14 +1,11 @@
 from datetime import date
 
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.http import HttpResponse
 from django.db.models import Q
-
 
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
@@ -20,7 +17,7 @@ from io import BytesIO
 
 from .models import Discipline, Student, Teacher, EDA, Mentor, Contract, Convocation
 from .forms import MentorForm, EDAForm, StudentForm, TeacherForm, ContractForm, ParagraphErrorList, ContractFormWithEDA
-from .forms import MentorFormWithStudent, EDAFormWithStudent, ConvocationFormWithContract
+from .forms import MentorFormWithStudent, EDAFormWithStudent, ConvocationFormWithContract, ContractFormDuplicate
 from .apps import CURRENT_YEAR
 from .filter import MentorFilter, EDAFilter, StudentFilter, TeacherFilter, ContractFilter
 
@@ -60,7 +57,7 @@ def student_details(request, id_student):
         'student_vorname': student.vorname,
         'student_portable' : student.portable,
         'student_email': student.email,
-        'current_classe': student.current_classe,
+        'classe': student.classe,
         'contracts': contract_list,
         'mentors' : mentor_list,
         'edas' : eda_list
@@ -77,7 +74,7 @@ def student_update(request, id_student):
         'student_name': student.name,
         'student_vorname' : student.vorname,
         'student_id' : student.id_OD,
-        'student_current_classe' : student.current_classe
+        'student_classe' : student.classe
     }
     if form.is_valid():
         form.save()
@@ -124,7 +121,7 @@ def mentor_details(request, id_mentor):
         'mentor_name': mentor.student.name,
         'mentor_vorname': mentor.student.vorname,
         'mentor_portable' : mentor.student.portable,
-        'mentor_classe': mentor.classe,
+        'mentor_classe': mentor.student.classe,
         'mentor_discipline' : mentor.discipline,
         'teacher_name': mentor.teacher.name,
         'teacher_vorname': mentor.teacher.vorname,
@@ -151,8 +148,7 @@ def mentor_create_from_student(request, id_student):
     """ Function based view to create a mentor from a selected student. """
     student = get_object_or_404(Student, pk=id_student)
 
-    form = MentorFormWithStudent(request.POST or None, error_class=ParagraphErrorList,
-                              initial={'student': student, 'classe': student.current_classe})
+    form = MentorFormWithStudent(request.POST or None, error_class=ParagraphErrorList)
     context = {
         'student_name': student.name,
         'student_vorname': student.vorname,
@@ -169,11 +165,12 @@ def mentor_create_from_student(request, id_student):
 def mentor_update(request, id_mentor):
     """ Function based view to edit a mentor. """
     mentor = get_object_or_404(Mentor, pk=id_mentor)
-    form = MentorForm(request.POST or None, instance=mentor)
+    form = MentorFormWithStudent(request.POST or None, instance=mentor)
     context = {
         'student_name': mentor.student.name,
         'student_vorname': mentor.student.vorname,
-        'status': 'new',
+        'student_classe' : mentor.student.classe,
+        'status': 'update',
     }
     if form.is_valid():
         form.save()
@@ -216,7 +213,7 @@ def eda_details(request, id_eda):
         'eda_name': eda.student.name,
         'eda_vorname': eda.student.vorname,
         'eda_portable' : eda.student.portable,
-        'eda_classe': eda.classe,
+        'eda_classe': eda.student.classe,
         'eda_discipline' : eda.discipline,
         'teacher_name': eda.teacher.name,
         'teacher_vorname': eda.teacher.vorname,
@@ -243,8 +240,7 @@ def eda_create_from_student(request, id_student):
     """ Function based view to create a mentor from a selected student. """
     student = get_object_or_404(Student, pk=id_student)
 
-    form = EDAFormWithStudent(request.POST or None, error_class=ParagraphErrorList,
-                              initial={'student': student, 'classe': student.current_classe})
+    form = EDAFormWithStudent(request.POST or None, error_class=ParagraphErrorList)
     context = {
         'student_name': student.name,
         'student_vorname': student.vorname,
@@ -262,11 +258,18 @@ def eda_create_from_student(request, id_student):
 def eda_update(request, id_eda):
     """ Function based view to edit an EDA. """
     eda = get_object_or_404(EDA, pk=id_eda)
-    form = EDAForm(request.POST or None, instance=eda)
+    form = EDAFormWithStudent(request.POST or None, instance=eda)
+    context = {
+        'student_name': eda.student.name,
+        'student_vorname': eda.student.vorname,
+        'student_classe': eda.student.classe,
+        'status': 'update',
+    }
     if form.is_valid():
         form.save()
         return redirect('pymentorat:eda_list')
-    return render(request,'pymentorat/eda_form.html',{'form':form})
+    context['form'] = form
+    return render(request,'pymentorat/eda_form.html',context=context)
 
 
 # Views for contracts
@@ -291,9 +294,35 @@ def contract_create_from_eda(request, id_eda):
     context = {
         'eda_name': eda.student.name,
         'eda_vorname': eda.student.vorname,
-        'eda_classe': eda.classe,
+        'eda_classe': eda.student.classe,
         'year': eda.year,
-        'discipline': eda.discipline.name
+        'discipline': eda.discipline.name,
+        'status': 'new',
+    }
+    if form.is_valid():
+        form.save()
+        return redirect('pymentorat:contract_list')
+    context['form'] = form
+    return render(request,'pymentorat/contract_form.html',context=context)
+
+@login_required
+def contract_duplicate(request, id_contract):
+    """ Function based view to create a contract. """
+    contract_parent = get_object_or_404(Contract, pk=id_contract)
+    eda = contract_parent.eda
+    mentor = contract_parent.mentor
+    form = ContractFormDuplicate(request.POST or None, error_class=ParagraphErrorList,
+                               initial={'eda': eda, 'mentor':mentor, 'discipline': eda.discipline, 'contract_parent': contract_parent})
+    context = {
+        'eda_name': eda.student.name,
+        'eda_vorname': eda.student.vorname,
+        'eda_classe': eda.student.classe,
+        'mentor_name': mentor.student.name,
+        'mentor_vorname': mentor.student.vorname,
+        'mentor_classe': mentor.student.classe,
+        'year': eda.year,
+        'discipline': eda.discipline.name,
+        'status': 'new',
     }
     if form.is_valid():
         form.save()
@@ -306,13 +335,18 @@ def contract_update(request, id_contract):
     """ Function based view to edit a contract. """
     contract = get_object_or_404(Contract, pk=id_contract)
     form = ContractForm(request.POST or None, instance=contract, error_class=ParagraphErrorList,
-                       initial={'eda': contract.eda, 'mentor': contract.mentor})
+                       initial={'eda': contract.eda, 'mentor': contract.mentor, 'begin_date': contract.begin_date})
     context = {
         'eda_name': contract.eda.student.name,
         'eda_vorname': contract.eda.student.vorname,
-        'eda_classe': contract.eda.classe,
+        'eda_classe': contract.eda.student.classe,
+        'mentor_name': contract.mentor.student.name,
+        'mentor_vorname': contract.mentor.student.vorname,
+        'mentor_classe': contract.mentor.student.classe,
         'year': contract.year,
-        'discipline': contract.discipline.name
+        'discipline': contract.discipline.name,
+        'begin_date': contract.begin_date,
+        'status': 'update',
     }
     if form.is_valid():
         form.save()
@@ -330,10 +364,10 @@ def convocation_create_from_contract(request, id_contract):
     context = {
         'eda_name': contract.eda.student.name,
         'eda_vorname': contract.eda.student.vorname,
-        'eda_classe': contract.eda.classe,
+        'eda_classe': contract.eda.student.classe,
         'mentor_name': contract.mentor.student.name,
         'mentor_vorname': contract.mentor.student.vorname,
-        'mentor_classe': contract.mentor.classe,
+        'mentor_classe': contract.mentor.student.classe,
         'discipline': contract.discipline.name
     }
     if form.is_valid():
@@ -352,7 +386,7 @@ def convocation_update(request, id_contract):
     context = {
         'eda_name': contract.eda.student.name,
         'eda_vorname': contract.eda.student.vorname,
-        'eda_classe': contract.eda.classe,
+        'eda_classe': contract.eda.student.classe,
         'year': contract.year,
         'discipline': contract.discipline.name
     }
@@ -425,7 +459,7 @@ def contract_pdf(request, id_contract):
     p.setFont("Arial", 11)
     p.drawString(xpos(5.5), ypos(3.5), "{nom} {prenom} ({classe})".format(nom=contract.mentor.student.name,
                                                                           prenom=contract.mentor.student.vorname,
-                                                                          classe=contract.mentor.classe
+                                                                          classe=contract.mentor.student.classe
                                                                          ))
 
     p.setFont("Arial", 11)
@@ -439,7 +473,7 @@ def contract_pdf(request, id_contract):
     p.setFont("Arial", 11)
     p.drawString(xpos(5.5), ypos(5.5), "{nom} {prenom} ({classe})".format(nom=contract.eda.student.name,
                                                                          prenom=contract.eda.student.vorname,
-                                                                         classe=contract.eda.classe
+                                                                         classe=contract.eda.student.classe
                                                                          ))
     p.setFont("Arial", 11)
     p.drawString(xpos(1), ypos(6.5), "N° portable : {natel}".format(natel=contract.eda.student.portable))

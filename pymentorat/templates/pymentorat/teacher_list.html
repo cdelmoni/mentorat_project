@@ -16,7 +16,7 @@
                 <th>Nom</th>
                 <th>Prénom</th>
                 <th>id</th>
-                <th></th>
+<!--                <th></th>-->
             </tr>
             {% for teacher in filter.qs %}
             <tr>
@@ -29,9 +29,12 @@
                 <td>
                     {{teacher.id_OD}}
                 </td>
-                <td>
-                    <a href="{% url 'pymentorat:teacher_update' teacher.pk %}">modifier</a>
-                </td>
+<!--                <td>
+                    <a href="{% url 'pymentorat:teacher_update' teacher.pk %}">
+                        <i class="fas fa-marker" title="Modifier le maître"></i>
+                    </a>
+                </td>-->
+
 
             </tr>
             {% endfor %}
