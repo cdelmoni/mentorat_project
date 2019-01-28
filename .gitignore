@@ -111,3 +111,4 @@ venv.bak/
 # security stuff
 secrets.json
 production.py
+config/settings/production.py
