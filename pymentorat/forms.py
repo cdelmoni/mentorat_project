@@ -1,11 +1,10 @@
 from django import forms
 from django.forms.utils import ErrorList
-from django.db.models import F
-from django.contrib.admin import widgets
 
-from .models import Mentor, EDA, Student, Teacher, Contract, Discipline, Convocation
+from .models import Mentor, EDA, Student, Teacher, Contract, Convocation
 
 from .apps import CURRENT_YEAR
+
 
 class ParagraphErrorList(ErrorList):
     def __str__(self):
@@ -19,7 +18,7 @@ class ParagraphErrorList(ErrorList):
 class StudentForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['current_classe', 'email', 'portable', 'tel']
+        fields = ['classe', 'email', 'portable', 'tel']
         readonly_fields = ['name', 'vorname', 'id_OD']
 
 
@@ -37,7 +36,10 @@ class MentorForm(forms.ModelForm):
 
 class MentorFormWithStudent(forms.ModelForm):
 
-   # student = forms.CharField(widget=forms.HiddenInput())
+    def __init__(self, *args, **kwargs):
+        super(MentorFormWithStudent, self).__init__(*args, **kwargs)
+        self.fields['student'].queryset = Student.objects.all().order_by('name')    # TODO - ne fonctionne pas
+
 
     class Meta:
         model = Mentor
@@ -46,28 +48,23 @@ class MentorFormWithStudent(forms.ModelForm):
             'student',
             'discipline',
             'teacher',
-            'year',
-            'classe',
             'remark',
             'is_active'
         ]
 
         widgets = {
-            'student': forms.HiddenInput
+            'student': forms.HiddenInput,
+            'discipline' : forms.HiddenInput
         }
 
         labels = {
-            'discipline': 'Branche',
             'teacher': "Maître de branche",
         }
 
-        readonly_fields = [
-            'student',
-            'year'
-        ]
 
 
 class EDAForm(forms.ModelForm):
+
     class Meta:
         model = EDA
         fields = '__all__'
@@ -82,18 +79,16 @@ class EDAFormWithStudent(forms.ModelForm):
             'student',
             'discipline',
             'teacher',
-            'year',
-            'classe',
             'remark',
             'is_active'
         ]
 
         widgets = {
-            'student': forms.HiddenInput
+            'student': forms.HiddenInput,
+            'discipline': forms.HiddenInput
         }
 
         labels = {
-            'discipline': 'Branche',
             'teacher': "Maître de branche",
         }
 
@@ -101,8 +96,6 @@ class EDAFormWithStudent(forms.ModelForm):
             'student',
             'year'
         ]
-
-
 
 
 # Forms for contracts
@@ -113,16 +106,18 @@ class ContractForm(forms.ModelForm):
 
         fields = [
             'eda',
-            'year',
             'mentor',
             'end_date',
             'remark',
             'contract_parent'
         ]
 
+        widgets = {
+            'eda': forms.HiddenInput,
+            'mentor': forms.HiddenInput
+        }
+
         labels = {
-            'eda': "Demandeur d'aide",
-            'mentor': "Mentor",
             'remark': "Remarque"
         }
 
@@ -135,7 +130,6 @@ class ContractForm(forms.ModelForm):
 
 class ContractFormWithEDA(forms.ModelForm):
     """ Form to create a contract with data of an EDA """
-    discipline = forms.HiddenInput()
 
     def __init__(self, *args, **kwargs):
         discipline_id = kwargs.pop('discipline_id', None)
@@ -150,7 +144,6 @@ class ContractFormWithEDA(forms.ModelForm):
         fields = [
             'discipline',
             'eda',
-            'year',
             'mentor',
             'remark',
             'contract_parent'
@@ -173,6 +166,34 @@ class ContractFormWithEDA(forms.ModelForm):
             'eda',
             'year'
         ]
+
+
+class ContractFormDuplicate(forms.ModelForm):
+    """ Form to create a contract from a parent one """
+
+    class Meta:
+        model = Contract
+
+        fields = [
+            'discipline',
+            'eda',
+            'mentor',
+            'remark',
+            'contract_parent'
+        ]
+
+        widgets = {
+            'eda': forms.HiddenInput,
+            'mentor': forms.HiddenInput,
+            'discipline': forms.HiddenInput,
+            'year': forms.HiddenInput,
+        }
+
+        labels = {
+            'eda': "Demandeur d'aide",
+            'remark': "Remarque"
+        }
+
 
 # Forms for convocations
 class ConvocationFormWithContract(forms.ModelForm):

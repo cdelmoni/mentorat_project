@@ -1,9 +1,9 @@
 {% extends 'pymentorat/base.html' %}
 
 {% block buttons %}
-        <a href="{% url 'pymentorat:mentor_create' %}" class="btn btn-outline-secondary btn-sm" id="new_mentor">
+<!--        <a href="{% url 'pymentorat:mentor_create' %}" class="btn btn-outline-secondary btn-sm" id="new_mentor">
             <i class="fas fa-plus-circle"></i> Nouveau mentor
-        </a>
+        </a>-->
         <a href="{% url 'pymentorat:student_list' %}" class="btn btn-outline-secondary btn-sm" id="student_list">
             Liste des élèves
         </a>
@@ -45,7 +45,7 @@
                     {{mentor.discipline}}
                 </td>
                 <td>
-                    {{mentor.classe}}
+                    {{mentor.student.classe}}
                 </td>
                  <td>
                     {{mentor.teacher}}
