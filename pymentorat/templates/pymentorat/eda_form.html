@@ -8,7 +8,7 @@
         {% else %}
         <h3>Modifier inscription EDA</h3>
         {% endif %}
-        <h5> Elève : {{student_vorname}} {{student_name}}</h5>
+        <h3> {{student_vorname}} {{student_name}} ({{student_classe}})</h3>
     <form  method="post">
         {% csrf_token %}
         {{ form.as_p }}

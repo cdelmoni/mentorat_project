@@ -21,9 +21,7 @@
                 <th>Prénom</th>
                 <th>Classe</th>
                 <th>Email</th>
-                <th>Téléphone</th>
                 <th>Portable</th>
-                <th>id</th>
                 <th>Actions</th>
             </tr>
             {% for student in filter.qs %}
@@ -35,19 +33,13 @@
                     {{student.vorname}}
                 </td>
                 <td>
-                    {{student.current_classe}}
+                    {{student.classe}}
                 </td>
                 <td>
                     {{student.email}}
                 </td>
-                <td>
-                    {{student.tel}}
-                </td>
                  <td>
                     {{student.portable}}
-                </td>
-                <td>
-                    {{student.id_OD}}
                 </td>
                 <td>
                     <a href="{% url 'pymentorat:student_details' student.pk %}">
