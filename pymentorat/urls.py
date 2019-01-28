@@ -114,6 +114,11 @@ urlpatterns = [
         name='contract_create'
     ),
     path(
+        'contract_duplicate/<int:id_contract>/',
+        views.contract_duplicate,
+        name='contract_duplicate'
+    ),
+    path(
         'contract_update/<int:id_contract>/',
         views.contract_update,
         name='contract_update'
