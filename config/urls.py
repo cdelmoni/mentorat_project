@@ -18,8 +18,8 @@ from django.urls import path, include
 
 
 urlpatterns = [
-    path('mgt/', admin.site.urls),
     path('', include('pymentorat.urls')),
+    path('mgt/', admin.site.urls),
 ]
 
 
