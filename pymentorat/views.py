@@ -148,10 +148,12 @@ def mentor_create_from_student(request, id_student):
     """ Function based view to create a mentor from a selected student. """
     student = get_object_or_404(Student, pk=id_student)
 
-    form = MentorFormWithStudent(request.POST or None, error_class=ParagraphErrorList)
+    form = MentorFormWithStudent(request.POST or None, error_class=ParagraphErrorList,
+                                 initial={'student': student})
     context = {
         'student_name': student.name,
         'student_vorname': student.vorname,
+        'student_classe': student.classe,
         'status': 'new',
     }
     if form.is_valid():
@@ -240,10 +242,12 @@ def eda_create_from_student(request, id_student):
     """ Function based view to create a mentor from a selected student. """
     student = get_object_or_404(Student, pk=id_student)
 
-    form = EDAFormWithStudent(request.POST or None, error_class=ParagraphErrorList)
+    form = EDAFormWithStudent(request.POST or None, error_class=ParagraphErrorList,
+                                 initial={'student': student})
     context = {
         'student_name': student.name,
         'student_vorname': student.vorname,
+        'student_classe': student.classe,
         'status': 'new',
     }
     if form.is_valid():

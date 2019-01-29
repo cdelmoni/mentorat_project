@@ -36,11 +36,6 @@ class MentorForm(forms.ModelForm):
 
 class MentorFormWithStudent(forms.ModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(MentorFormWithStudent, self).__init__(*args, **kwargs)
-        self.fields['student'].queryset = Student.objects.all().order_by('name')    # TODO - ne fonctionne pas
-
-
     class Meta:
         model = Mentor
 
@@ -54,12 +49,16 @@ class MentorFormWithStudent(forms.ModelForm):
 
         widgets = {
             'student': forms.HiddenInput,
-            'discipline' : forms.HiddenInput
         }
 
         labels = {
             'teacher': "Maître de branche",
+            'discipline': "Branche",
         }
+
+        readonly_fields = [
+            'student',
+        ]
 
 
 
@@ -85,11 +84,11 @@ class EDAFormWithStudent(forms.ModelForm):
 
         widgets = {
             'student': forms.HiddenInput,
-            'discipline': forms.HiddenInput
         }
 
         labels = {
             'teacher': "Maître de branche",
+            'discipline': "Branche",
         }
 
         readonly_fields = [

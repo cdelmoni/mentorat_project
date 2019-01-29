@@ -43,7 +43,7 @@
                     {{contract.eda.student}}
                 </td>
                 <td>
-                    <a href="{% url 'pymentorat:mentor_details' contract.mentor.pk %}">{{contract.mentor.student}} ({{contract.mentor.classe}})</a>
+                    <a href="{% url 'pymentorat:mentor_details' contract.mentor.pk %}">{{contract.mentor.student}} ({{contract.mentor.student.classe}})</a>
                 </td>
                 <td>
                     {{contract.discipline}}
