@@ -51,6 +51,7 @@ class MentorFormWithStudent(forms.ModelForm):
             'student',
             'discipline',
             'teacher',
+            'inscription_date',
             'remark',
             'is_active'
         ]
@@ -93,6 +94,7 @@ class EDAFormWithStudent(forms.ModelForm):
             'student',
             'discipline',
             'teacher',
+            'inscription_date',
             'remark',
             'is_active'
         ]
