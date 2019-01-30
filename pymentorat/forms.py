@@ -1,7 +1,9 @@
 from django import forms
 from django.forms.utils import ErrorList
 
-from .models import Mentor, EDA, Student, Teacher, Contract, Convocation
+#import floppyforms.__future__ as forms
+
+from .models import Mentor, EDA, Student, Teacher, Contract, Convocation, Discipline
 
 from .apps import CURRENT_YEAR
 
@@ -35,6 +37,12 @@ class MentorForm(forms.ModelForm):
 
 
 class MentorFormWithStudent(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(MentorFormWithStudent, self).__init__(*args, **kwargs)
+
+        self.fields['teacher'].queryset = Teacher.objects.order_by('name')
+        self.fields['discipline'].queryset = Discipline.objects.order_by('name')
 
     class Meta:
         model = Mentor
@@ -70,6 +78,13 @@ class EDAForm(forms.ModelForm):
 
 
 class EDAFormWithStudent(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EDAFormWithStudent, self).__init__(*args, **kwargs)
+
+        self.fields['teacher'].queryset = Teacher.objects.order_by('name')
+        self.fields['discipline'].queryset = Discipline.objects.order_by('name')
+
 
     class Meta:
         model = EDA
