@@ -66,15 +66,15 @@ class Mentor(TimeStampedModel):
     def __str__(self):
         return "{0} {1} mentor pour {2}".format(self.student.name, self.student.vorname, self.discipline.name)
 
-    def clean(self):
-        count_same_mentors = Mentor.objects.filter(year=CURRENT_YEAR,
-                                                   student=self.student,
-                                                   discipline=self.discipline).count()
-        if count_same_mentors != 0:
-            raise ValidationError(
-                "Ce mentor existe déjà !",
-                code='eda_not_unique'
-            )
+    # def clean(self):
+    #     count_same_mentors = Mentor.objects.filter(year=CURRENT_YEAR,
+    #                                                student=self.student,
+    #                                                discipline=self.discipline).count()
+    #     if count_same_mentors != 0:
+    #         raise ValidationError(
+    #             "Ce mentor existe déjà !",
+    #             code='eda_not_unique'
+    #         )
 
     def get_absolute_url(self):
         return reverse('pymentorat:mentor_update', kwargs={'id_mentor': self.pk})
@@ -100,15 +100,15 @@ class EDA(TimeStampedModel):
     def __str__(self):
         return "{0} {1} eda pour {2}".format(self.student.name, self.student.vorname, self.discipline.name)
 
-    def clean(self):
-        count_same_edas = EDA.objects.filter(year=CURRENT_YEAR,
-                                             student=self.student,
-                                             discipline=self.discipline).count()
-        if (count_same_edas != 0):
-            raise ValidationError(
-                "Cet EDA existe déjà !",
-                code='eda_not_unique'
-            )
+    # def clean(self):
+    #     count_same_edas = EDA.objects.filter(year=CURRENT_YEAR,
+    #                                          student=self.student,
+    #                                          discipline=self.discipline).count()
+    #     if (count_same_edas != 0):
+    #         raise ValidationError(
+    #             "Cet EDA existe déjà !",
+    #             code='eda_not_unique'
+    #         )
 
     def get_absolute_url(self):
         return reverse('pymentorat:eda_update', kwargs={'id_eda': self.pk})
