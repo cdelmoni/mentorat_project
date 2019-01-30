@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.core.exceptions import ValidationError
+from django.utils.timezone import now
 
 from core.models import TimeStampedModel
 from .apps import CURRENT_YEAR
@@ -55,7 +56,7 @@ class Mentor(TimeStampedModel):
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     year = models.PositiveIntegerField('Année', default=CURRENT_YEAR)
-    inscription_date = models.DateTimeField("Date d'inscription", auto_now_add=True)
+    inscription_date = models.DateField("Date d'inscription", default=now)
     remark = models.TextField('Remarque', null=True, blank=True)
     is_active = models.BooleanField('Actif', default=True, null=False, blank=False)
 
@@ -89,7 +90,7 @@ class EDA(TimeStampedModel):
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     year = models.PositiveIntegerField('Année', default=CURRENT_YEAR)
-    inscription_date = models.DateTimeField("Date d'inscription", auto_now_add=True)
+    inscription_date = models.DateField("Date d'inscription", default=now)
     remark = models.TextField('Remarque', null=True, blank=True)
     is_active = models.BooleanField('Actif', default=True, null=False, blank=False)
 
@@ -124,7 +125,7 @@ class Contract(TimeStampedModel):
     discipline = models.ForeignKey(Discipline, on_delete=models.CASCADE)
     contract_parent = models.ForeignKey('self', null=True, blank=True,  on_delete=models.CASCADE)
     year = models.PositiveIntegerField('Année', default=CURRENT_YEAR)
-    begin_date = models.DateField('Date de début', auto_now_add=True)
+    begin_date = models.DateField('Date de début', default=now)
     end_date = models.DateField('Date de fin', null=True, blank=True)
     remark = models.TextField('Remarque', null=True, blank=True)
 

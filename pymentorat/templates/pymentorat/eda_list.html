@@ -69,7 +69,9 @@
                     <a href="{% url 'pymentorat:eda_update' eda.pk %}">
                         <i class="fas fa-marker" title="Modifier le demandeur"></i>
                     </a>
-
+                    <a href="{% url 'pymentorat:eda_create_from_student' eda.student.pk %}">
+                        <i class="fas fa-plus-circle" title="Nouveau eda"></i>
+                    </a>
                     <a href="{% url 'pymentorat:contract_create' eda.pk %}">
                         <i class="fas fa-folder-plus" title="Nouveau contrat"></i>
                     </a>

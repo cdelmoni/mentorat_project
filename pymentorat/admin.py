@@ -15,14 +15,45 @@ class StudentAdmin(ImportExportModelAdmin):
 @admin.register(Teacher)
 class TeacherAdmin(ImportExportModelAdmin):
     resource_class = TeacherResource
+    list_display = [
+        'name',
+        'vorname',
+        'id_OD'
+    ]
 
 @admin.register(EDA)
 class EDAAdmin(admin.ModelAdmin):
-    pass
+    list_display = [
+        'student',
+        'discipline',
+        'inscription_date',
+        'is_active',
+    ]
+    list_filter = (
+        'discipline',
+        'inscription_date',
+        'is_active',
+    )
+    fields = [
+        'student',
+        'discipline',
+        'inscription_date',
+        'is_active',
+    ]
 
 @admin.register(Mentor)
 class MentorAdmin(admin.ModelAdmin):
-    pass
+    list_display = [
+        'student',
+        'discipline',
+        'inscription_date',
+        'is_active',
+    ]
+    list_filter = (
+        'discipline',
+        'inscription_date',
+        'is_active',
+    )
 
 @admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
