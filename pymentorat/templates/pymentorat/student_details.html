@@ -4,13 +4,13 @@
         <a href="{% url 'pymentorat:student_list' %}" class="btn btn-outline-secondary btn-sm" id="student_list_button">
             <i class="fa fa-bars" aria-hidden="true"></i> Liste des élèves
         </a>
-        <a href="{% url 'pymentorat:student_update' student_pk %}" class="btn btn-outline-secondary btn-sm" id="student_list_button">
+        <a href="{% url 'pymentorat:student_update' student_pk %}" class="btn btn-outline-secondary btn-sm" id="student_update_button">
             <i class="fas fa-marker"></i> Modifier l'élève
         </a>
-        <a href="{% url 'pymentorat:mentor_create_from_student' student_pk %}" class="btn btn-outline-secondary btn-sm" id="student_list_button">
+        <a href="{% url 'pymentorat:mentor_create_from_student' student_pk %}" class="btn btn-outline-secondary btn-sm" id="student_create_mentor_button">
             <i class="fas fa-plus-circle"></i> Inscrire comme mentor
         </a>
-        <a href="{% url 'pymentorat:eda_create_from_student' student_pk %}" class="btn btn-outline-secondary btn-sm" id="student_list_button">
+        <a href="{% url 'pymentorat:eda_create_from_student' student_pk %}" class="btn btn-outline-secondary btn-sm" id="student_create_eda_button">
             <i class="fas fa-plus-square" ></i> Inscrire comme EDA
         </a>
 {% endblock%}
