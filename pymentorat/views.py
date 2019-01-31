@@ -59,8 +59,11 @@ def student_details(request, id_student):
         'student_email': student.email,
         'classe': student.classe,
         'contracts': contract_list,
+        'nb_contracts': contract_list.count(),
         'mentors' : mentor_list,
-        'edas' : eda_list
+        'nb_mentors': mentor_list.count(),
+        'edas' : eda_list,
+        'nb_edas': eda_list.count(),
     }
 
     return render(request,'pymentorat/student_details.html', context)
@@ -123,9 +126,11 @@ def mentor_details(request, id_mentor):
         'mentor_portable' : mentor.student.portable,
         'mentor_classe': mentor.student.classe,
         'mentor_discipline' : mentor.discipline,
+        'student_pk' : mentor.student.pk,
         'teacher_name': mentor.teacher.name,
         'teacher_vorname': mentor.teacher.vorname,
-        'contracts': contract_list
+        'contracts': contract_list,
+        'nb_contracts': contract_list.count()
     }
 
     return render(request,'pymentorat/mentor_details.html', context)
@@ -217,9 +222,11 @@ def eda_details(request, id_eda):
         'eda_portable' : eda.student.portable,
         'eda_classe': eda.student.classe,
         'eda_discipline' : eda.discipline,
+        'student_pk': eda.student.pk,
         'teacher_name': eda.teacher.name,
         'teacher_vorname': eda.teacher.vorname,
-        'contracts': contract_list
+        'contracts': contract_list,
+        'nb_contracts': contract_list.count()
     }
 
     return render(request,'pymentorat/eda_details.html', context)
