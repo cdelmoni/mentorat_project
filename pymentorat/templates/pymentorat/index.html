@@ -1,10 +1,148 @@
 {% extends 'pymentorat/base.html' %}
 
 
+    {% block buttons %}
+
+    <a href="{% url 'pymentorat:student_list' %}" class="btn btn-outline-secondary btn-sm" id="student_list_button">
+            <i class="fa fa-bars" aria-hidden="true"></i> Liste des élèves
+            <span class="badge badge-pill badge-primary" title="Nb. contrats">
+                {{nb_mentors}}
+            </span>
+    </a>
+    <a href="{% url 'pymentorat:mentor_list' %}" class="btn btn-outline-secondary btn-sm" id="mentor_list_button">
+            <i class="fa fa-bars" aria-hidden="true"></i> Liste des mentors
+            <span class="badge badge-pill badge-primary" title="Nb. contrats">
+                {{nb_mentors}}
+            </span>
+    </a>
+    <a href="{% url 'pymentorat:eda_list' %}" class="btn btn-outline-secondary btn-sm" id="eda_list_button">
+            <i class="fa fa-bars" aria-hidden="true"></i> Liste des demandeurs
+            <span class="badge badge-pill badge-primary" title="Nb. contrats">
+                {{nb_edas}}
+            </span>
+    </a>
+    <a href="{% url 'pymentorat:contract_list' %}" class="btn btn-outline-secondary btn-sm" id="contract_list_button">
+            <i class="fa fa-bars" aria-hidden="true"></i> Liste des contrats
+            <span class="badge badge-pill badge-primary" title="Nb. contrats">
+                {{nb_contracts}}
+            </span>
+    </a>
+    {% endblock%}
 
     {% block content %}
 
-    <h2>Listes des mentors</h2>
+    <h3>Prochains rendez-vous</h3>
+
+    <table class="table table-striped table-hover">
+        <tr>
+            <th>
+                Demandeur
+            </th>
+            <th>
+                Mentor
+            </th>
+            <th>
+                Date
+            </th>
+            <th>
+                Lieu
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    {% for convocation in convocations %}
+        <tr>
+            <td>
+                {{convocation.contract.eda.student.name}}
+                {{convocation.contract.eda.student.vorname}}
+                ({{convocation.contract.eda.student.classe}})
+            </td>
+            <td>
+                {{convocation.contract.mentor.student.name}}
+                {{convocation.contract.mentor.student.vorname}}
+                ({{convocation.contract.mentor.student.classe}})
+            </td>
+            <td>
+                {{convocation.date}} à
+                {{convocation.time}}
+            </td>
+            <td>
+                {{convocation.place}}
+            </td>
+            <td>
+                <a href="{% url 'pymentorat:convocation_update' convocation.pk %}">
+                    <i class="fas fa-marker" title="Modifier la convocation"></i>
+                </a>
+
+                <a href="{% url 'pymentorat:convocation_pdf' convocation.pk %}">
+                    <i class="fas fa-print" title="Réimprimer la convocation"></i>
+                </a>
+                <a href="{% url 'pymentorat:convocation_delete' convocation.pk %}">
+                    <i class="fas fa-times-circle" title="Supprimer la convocation"></i>
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+
+    <br>
+
+    <h3>Contrats en cours</h3>
+    <table class="table table-striped table-hover">
+        <tr>
+            <th>
+                Demandeur
+            </th>
+            <th>
+                Mentor
+            </th>
+            <th>
+                Discipline
+            </th>
+            <th>
+                Date de début
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    {% for contract in contracts %}
+        <tr>
+            <td>
+                {{contract.eda.student.name}}
+                {{contract.eda.student.vorname}}
+                ({{contract.eda.student.classe}})
+            </td>
+            <td>
+                {{contract.mentor.student.name}}
+                {{contract.mentor.student.vorname}}
+                ({{contract.mentor.student.classe}})
+            </td>
+            <td>
+                {{contract.discipline}}
+            </td>
+            <td>
+                {{contract.begin_date}}
+            </td>
+            <td>
+                <a href="{% url 'pymentorat:contract_update' contract.pk %}">
+                    <i class="fas fa-marker" title="Modifier le contrat"></i>
+                </a>
+
+                <a href="{% url 'pymentorat:contract_pdf' contract.pk %}">
+                    <i class="fas fa-print" title="Imprimer le contrat"></i>
+                </a>
+
+                <a href="{% url 'pymentorat:convocation_create' contract.pk %}">
+                    <i class="far fa-calendar-plus" title="Créer une convocation"></i>
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+
+<!--    <h3>Listes des mentors</h3>
 
     <table>
     {% for mentor in mentors %}
@@ -23,7 +161,7 @@
     {% endfor %}
     </table>
 
-    <h2>Listes des élèves demandeurs d'aide</h2>
+    <h3>Listes des élèves demandeurs d'aide</h3>
 
     <table>
     {% for eda in edas %}
@@ -40,6 +178,6 @@
 
     </tr>
     {% endfor %}
-    </table>
+    </table>-->
 
     {% endblock %}

@@ -4,8 +4,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
+from django.utils.timezone import now
 
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
@@ -28,10 +29,18 @@ def index(request):
     disciplines = Discipline.objects.order_by('name')
     mentors = Mentor.objects.filter(year=CURRENT_YEAR, is_active=True)
     edas = EDA.objects.filter(year=CURRENT_YEAR, is_active=True)
+    contracts = Contract.objects.filter(year=CURRENT_YEAR, end_date=None).order_by('discipline')
+    convocations = Convocation.objects.filter(date__gt = now()).order_by('date', 'time')
     context = {
         'disciplines': disciplines,
         'mentors': mentors,
-        'edas': edas
+        'nb_mentors': mentors.count(),
+        'edas': edas,
+        'nb_edas': edas.count(),
+        'contracts': contracts,
+        'nb_contracts': contracts.count(),
+        'convocations': convocations,
+        'nbconvocations': convocations.count(),
     }
     return render(request, 'pymentorat/index.html', context)
 
@@ -371,7 +380,7 @@ def convocation_create_from_contract(request, id_contract):
     """ Function based view to create a convocation. """
     contract = get_object_or_404(Contract, pk=id_contract)
     form = ConvocationFormWithContract(request.POST or None, error_class=ParagraphErrorList,
-                              initial={'contract': contract})
+                              initial={'contract': contract, 'date': now()})
     context = {
         'eda_name': contract.eda.student.name,
         'eda_vorname': contract.eda.student.vorname,
@@ -379,7 +388,8 @@ def convocation_create_from_contract(request, id_contract):
         'mentor_name': contract.mentor.student.name,
         'mentor_vorname': contract.mentor.student.vorname,
         'mentor_classe': contract.mentor.student.classe,
-        'discipline': contract.discipline.name
+        'discipline': contract.discipline.name,
+        'status': 'new'
     }
     if form.is_valid():
         convocation=form.save()
@@ -388,24 +398,42 @@ def convocation_create_from_contract(request, id_contract):
     return render(request,'pymentorat/convocation_form.html',context=context)
 
 
+
 @login_required
-def convocation_update(request, id_contract):
-    """ Function based view to edit a contract. """
-    contract = get_object_or_404(Contract, pk=id_contract)
-    form = ContractForm(request.POST or None, instance=contract, error_class=ParagraphErrorList,
-                       initial={'eda': contract.eda, 'mentor': contract.mentor})
+def convocation_update(request, id_convocation):
+    """ Function based view to update a convocation. """
+    convocation = get_object_or_404(Convocation, pk=id_convocation)
+    form = ConvocationFormWithContract(request.POST or None, error_class=ParagraphErrorList,
+                              instance=convocation)
     context = {
-        'eda_name': contract.eda.student.name,
-        'eda_vorname': contract.eda.student.vorname,
-        'eda_classe': contract.eda.student.classe,
-        'year': contract.year,
-        'discipline': contract.discipline.name
+        'eda_name': convocation.contract.eda.student.name,
+        'eda_vorname': convocation.contract.eda.student.vorname,
+        'eda_classe': convocation.contract.eda.student.classe,
+        'mentor_name': convocation.contract.mentor.student.name,
+        'mentor_vorname': convocation.contract.mentor.student.vorname,
+        'mentor_classe': convocation.contract.mentor.student.classe,
+        'discipline': convocation.contract.discipline.name,
+        'status' : 'update'
     }
     if form.is_valid():
-        form.save()
-        return redirect('pymentorat:contract_list')
+        convocation=form.save()
+        return redirect('pymentorat:convocation_pdf', id_convocation=convocation.pk)
     context['form'] = form
-    return render(request,'pymentorat/contract_form.html',context=context)
+    return render(request,'pymentorat/convocation_form.html',context=context)
+
+@login_required
+def convocation_delete(request, id_convocation):
+    """ Function based view to delete a convocation. """
+    convocation = get_object_or_404(Convocation, pk=id_convocation)
+
+    if request.method == "POST":
+        convocation.delete()
+        #messages.success(request, "Post successfully deleted!")
+        return redirect('pymentorat:index')
+
+    return render(request, 'pymentorat/convocation_confirm_delete.html',  context={'object':convocation})
+
+
 
 
 ### Views for PDF rendering
@@ -623,7 +651,7 @@ def convocation_pdf(request, id_convocation):
         p.drawCentredString(xpos(6.5), ypos(1.5), "Convocation" )
 
         p.setFont("Arial", 18)
-        p.drawString(xpos(0), ypos(3), "{0} {1} ({2})".format(dest.student.vorname, dest.student.name, dest.classe))
+        p.drawString(xpos(0), ypos(3), "{0} {1} ({2})".format(dest.student.vorname, dest.student.name, dest.student.classe))
 
         p.setFont("Arial", 14)
         p.drawString(xpos(0), ypos(5), "Concerne : Contrat de mentorat")
