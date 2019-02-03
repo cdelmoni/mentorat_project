@@ -1,7 +1,12 @@
 {% extends 'pymentorat/base.html' %}
 
 {% block content %}
-    <h3>Modifier la convocation</h3>
+    {% if status == 'new' %}
+        <h3>Nouvelle convocation</h3>
+    {% else %}
+        <h3>Modifier la convocation</h3>
+    {% endif %}
+
 
 
     <div class="container text-center">

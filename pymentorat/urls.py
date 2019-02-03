@@ -133,10 +133,21 @@ urlpatterns = [
         views.contract_pdf,
         name='contract_pdf'
     ),
+    # Convocation's pages
     path(
         'convocation_create/<int:id_contract>/',
         views.convocation_create_from_contract,
         name='convocation_create'
+    ),
+    path(
+        'convocation_update/<int:id_convocation>/',
+        views.convocation_update,
+        name='convocation_update'
+    ),
+    path(
+        'convocation_delete/<int:id_convocation>/',
+        views.convocation_delete,
+        name='convocation_delete'
     ),
     path(
         'convocation_print/<int:id_convocation>/',

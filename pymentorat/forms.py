@@ -58,6 +58,7 @@ class MentorFormWithStudent(forms.ModelForm):
 
         widgets = {
             'student': forms.HiddenInput,
+            'inscription_date': forms.SelectDateWidget,
         }
 
         labels = {
@@ -101,6 +102,7 @@ class EDAFormWithStudent(forms.ModelForm):
 
         widgets = {
             'student': forms.HiddenInput,
+            'inscription_date': forms.SelectDateWidget,
         }
 
         labels = {
@@ -123,6 +125,7 @@ class ContractForm(forms.ModelForm):
         fields = [
             'eda',
             'mentor',
+            'begin_date',
             'end_date',
             'remark',
             'contract_parent'
@@ -130,7 +133,9 @@ class ContractForm(forms.ModelForm):
 
         widgets = {
             'eda': forms.HiddenInput,
-            'mentor': forms.HiddenInput
+            'mentor': forms.HiddenInput,
+            'begin_date': forms.SelectDateWidget,
+            'end_date': forms.SelectDateWidget,
         }
 
         labels = {
@@ -213,7 +218,7 @@ class ContractFormDuplicate(forms.ModelForm):
 
 # Forms for convocations
 class ConvocationFormWithContract(forms.ModelForm):
-    """ Form to create a convocation from a contract """
+    """ Form to create or update a convocation from a contract """
     contract = forms.HiddenInput()
 
     class Meta:
@@ -230,7 +235,7 @@ class ConvocationFormWithContract(forms.ModelForm):
         widgets = {
             'contract': forms.HiddenInput,
             'date': forms.SelectDateWidget,
-            'time': forms.DateTimeInput,
+            'time': forms.TimeInput,
             'place': forms.TextInput(attrs={'maxlength': 64}),
             'message': forms.TextInput(attrs={'maxlength': 64}),
         }
