@@ -24,7 +24,7 @@ class Student(TimeStampedModel):
     email = models.EmailField('E-mail', null=True, blank=True)
     portable = models.CharField('Portable', max_length=13, null=True, blank=True)
     tel = models.CharField('Téléphone', max_length=13, null=True, blank=True)
-    id_OD = models.CharField(max_length=10, unique=True)
+    id_OD = models.CharField(max_length=20, unique=True)
     classe = models.CharField('Classe actuelle', max_length=12, null=True, blank=True)
 
     def __str__(self):
@@ -41,7 +41,7 @@ class Student(TimeStampedModel):
 class Teacher(TimeStampedModel):
     name = models.CharField('Nom', max_length=50)
     vorname = models.CharField('Prénom', max_length=50)
-    id_OD = models.CharField(max_length=10, unique=True, null=True)
+    id_OD = models.CharField(max_length=20, unique=True, null=True)
 
     def __str__(self):
         return "{0} {1}".format(self.name, self.vorname)
