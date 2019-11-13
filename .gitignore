@@ -112,4 +112,5 @@ venv.bak/
 secrets.json
 production.py
 config/settings/production.py
+config/settings/
 config/wsgi.py
