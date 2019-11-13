@@ -26,7 +26,7 @@ DATABASES = {
         'NAME': 'mentorat', # le nom de notre base de donnees creee precedemment
         'USER': 'mentorat', # attention : remplacer par votre nom d'utilisateur
         'PASSWORD': 'dbmentoratwapiti',
-        'HOST': '',
+        'HOST': 'localhost',
         'PORT': '5432',
         'ATOMIC_REQUESTS': True,    #toute les requêtes DB sont inclues dans une transaction
     }
@@ -60,4 +60,6 @@ SECURE_HSTS_SECONDS = 3600
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 SECURE_HSTS_PRELOAD = True
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
