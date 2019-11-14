@@ -28,7 +28,7 @@ class Student(TimeStampedModel):
     classe = models.CharField('Classe actuelle', max_length=12, null=True, blank=True)
 
     def __str__(self):
-        return "{0} {1}".format(self.name, self.vorname)
+        return "{0} {1}".format(self.name, self.vorname, self.classe)
 
     class Meta:
         verbose_name = "Elève"
@@ -65,7 +65,8 @@ class Mentor(TimeStampedModel):
         verbose_name_plural = "Elèves mentors"
 
     def __str__(self):
-        return "{0} {1} mentor pour {2}".format(self.student.name, self.student.vorname, self.discipline.name)
+        return "{0} {1} ({3}) mentor pour {2}".format(self.student.name, self.student.vorname, self.discipline.name,
+                                                      self.student.classe)
 
     # def clean(self):
     #     count_same_mentors = Mentor.objects.filter(year=CURRENT_YEAR,
