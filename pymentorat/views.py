@@ -488,7 +488,7 @@ def contract_pdf(request, id_contract):
     p.setFont("Arial-Bold", 12)
     p.drawString(xpos(0), ypos(2.5), "Branche :")
     p.setFont("Arial", 11)
-    p.drawString(xpos(5.5), ypos(2.5), "{branche}".format(branche=contract.discipline))
+    p.drawString(xpos(4.5), ypos(2.5), "{branche}".format(branche=contract.discipline))
 
     p.line(xpos(0), ypos(3), width / 2 - 1 * cm, ypos(3))
 
@@ -496,39 +496,39 @@ def contract_pdf(request, id_contract):
     p.drawString(xpos(0), ypos(3.5), "Mentor : ")
 
     p.setFont("Arial", 11)
-    p.drawString(xpos(5.5), ypos(3.5), "{nom} {prenom} ({classe})".format(nom=contract.mentor.student.name,
+    p.drawString(xpos(4.5), ypos(3.5), "{nom} {prenom} ({classe})".format(nom=contract.mentor.student.name,
                                                                           prenom=contract.mentor.student.vorname,
                                                                           classe=contract.mentor.student.classe
                                                                          ))
 
-    p.setFont("Arial", 11)
-    p.drawString(xpos(1), ypos(4.5), "N° portable : {natel}".format(natel=contract.mentor.student.portable ))
-    p.drawString(xpos(5.5), ypos(4.5),"Email : {email}".format(email=contract.mentor.student.email))
+    p.setFont("Arial", 10)
+    p.drawString(xpos(0.5), ypos(4.5), "Port. : {natel}".format(natel=contract.mentor.student.portable ))
+    p.drawString(xpos(4.5), ypos(4.5),"Email : {email}".format(email=contract.mentor.student.email))
 
     p.line(xpos(0), ypos(5), width / 2 - 1 * cm, ypos(5))
 
     p.setFont("Arial-Bold", 12)
     p.drawString(xpos(0), ypos(5.5), "Demandeur d'aide :")
     p.setFont("Arial", 11)
-    p.drawString(xpos(5.5), ypos(5.5), "{nom} {prenom} ({classe})".format(nom=contract.eda.student.name,
+    p.drawString(xpos(4.5), ypos(5.5), "{nom} {prenom} ({classe})".format(nom=contract.eda.student.name,
                                                                          prenom=contract.eda.student.vorname,
                                                                          classe=contract.eda.student.classe
                                                                          ))
-    p.setFont("Arial", 11)
-    p.drawString(xpos(1), ypos(6.5), "N° portable : {natel}".format(natel=contract.eda.student.portable))
-    p.drawString(xpos(5.5), ypos(6.5), "Email : {email}".format(email=contract.eda.student.email))
+    p.setFont("Arial", 10)
+    p.drawString(xpos(0.5), ypos(6.5), "Port. : {natel}".format(natel=contract.eda.student.portable))
+    p.drawString(xpos(4.5), ypos(6.5), "Email : {email}".format(email=contract.eda.student.email))
 
 
 
     p.line(xpos(0), ypos(7), width / 2 - 1 * cm, ypos(7))
 
     p.drawString(xpos(0), ypos(8), "Date et lieu : Cheseaux-Noréaz, le ")
-    p.drawString(xpos(7.5), ypos(8), ".................................")
+    p.drawString(xpos(6), ypos(8), "...........................................")
     p.drawString(xpos(0), ypos(9), "Signature du mentor")
-    p.drawString(xpos(5.5), ypos(9), "...........................................")
+    p.drawString(xpos(6), ypos(9), "...........................................")
 
     p.drawString(xpos(0), ypos(10), "Signature du demandeur")
-    p.drawString(xpos(5.5), ypos(10), "...........................................")
+    p.drawString(xpos(6), ypos(10), "...........................................")
 
     p.line(xpos(0), ypos(10.5), width / 2 - 1 * cm, ypos(10.5))
 
@@ -537,10 +537,10 @@ def contract_pdf(request, id_contract):
 
     p.setFont("Arial", 11)
     p.drawString(xpos(0), ypos(12.5), "Avant la première séance")
-    p.drawString(xpos(5.5), ypos(12.5), "...........................................")
+    p.drawString(xpos(6), ypos(12.5), "...........................................")
 
     p.drawString(xpos(0), ypos(13.5), "Après la dernière séance")
-    p.drawString(xpos(5.5), ypos(13.5), "...........................................")
+    p.drawString(xpos(6), ypos(13.5), "...........................................")
 
 
 
