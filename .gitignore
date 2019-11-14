@@ -115,3 +115,4 @@ config/settings/production.py
 config/settings/
 config/wsgi.py
 dump.json
+config/settings/local.py
