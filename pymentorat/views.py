@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.utils.timezone import now
+from django.utils.text import slugify
 
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
@@ -444,7 +445,7 @@ def convocation_delete(request, id_convocation):
 def contract_pdf(request, id_contract):
     contract = get_object_or_404(Contract, pk=id_contract)
     response = HttpResponse(content_type='application/pdf')
-    filename = "contrat_mentorat_{0}_{1}.pdf".format(contract.eda.student.name, contract.mentor.student.name)
+    filename = "contrat_mentorat_{0}_{1}.pdf".format(slugify(contract.eda.student.name), slugify(contract.mentor.student.name))
     response['Content-Disposition'] = "attachment;filename={0}".format(filename)
 
     buffer = BytesIO()
@@ -603,8 +604,8 @@ def contract_pdf(request, id_contract):
 def convocation_pdf(request, id_convocation):
     convocation = get_object_or_404(Convocation, pk=id_convocation)
     response = HttpResponse(content_type='application/pdf')
-    filename = "convocation_mentorat_{0}_{1}.pdf".format(convocation.contract.eda.student.name,
-                                                   convocation.contract.mentor.student.name)
+    filename = "convocation_mentorat_{0}_{1}.pdf".format(slugify(convocation.contract.eda.student.name),
+                                                   slugify(convocation.contract.mentor.student.name))
     response['Content-Disposition'] = "attachment;filename={0}".format(filename)
 
     eda = convocation.contract.eda
