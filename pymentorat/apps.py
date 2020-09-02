@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
-CURRENT_YEAR=2019
+CURRENT_YEAR=2020
 
 
 class PymentoratConfig(AppConfig):
