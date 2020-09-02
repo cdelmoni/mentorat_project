@@ -116,3 +116,6 @@ config/settings/
 config/wsgi.py
 dump.json
 config/settings/local.py
+
+#PyCharm stuff
+.idea/
