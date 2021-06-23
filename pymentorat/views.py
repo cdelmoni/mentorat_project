@@ -23,7 +23,6 @@ from .forms import MentorFormWithStudent, EDAFormWithStudent, ConvocationFormWit
 from .apps import CURRENT_YEAR
 from .filter import MentorFilter, EDAFilter, StudentFilter, TeacherFilter, ContractFilter
 
-
 @login_required
 def index(request):
     """ Function based view to render the home page """
@@ -659,7 +658,7 @@ def convocation_pdf(request, id_convocation):
 
         p.setFont("Arial", 14)
         p.drawString(xpos(0), ypos(7), "Merci de vous présenter {0}".format(convocation.place.casefold()))
-        p.drawString(xpos(5.45), ypos(8), "le {0} à {1}".format(convocation.date.strftime('%d.%m.%Y'),
+        p.drawString(xpos(5.45), ypos(8), "le {0} à {1}".format(convocation.date.strftime('%A %d.%m.%Y'),
                                                                 convocation.time.strftime('%H:%M')))
 
         if (convocation.message != None):
@@ -687,6 +686,55 @@ def convocation_pdf(request, id_convocation):
 
     return response
 
+
+@login_required
+def statistiques(request):
+    ByBranch = {}
+
+    for disc in Discipline.objects.order_by('name'):
+        studentDisc = EDA.objects.filter(discipline=disc.id);
+
+        # TODO: A ameliorer, meme si pour la taille de la bd, pas necessaire...
+        ByBranch[disc] = {
+            'contracts': Contract.objects.filter(discipline=disc.id).count(),
+            'mentors': Mentor.objects.filter(discipline=disc.id).count(),
+            'eda': studentDisc.count(),
+            'eda1': studentDisc.filter(student__classe__startswith="1").count(),
+            'eda2': studentDisc.filter(student__classe__startswith="2").count(),
+            'eda3': studentDisc.filter(student__classe__startswith="3").count(),
+            'eda1c': studentDisc.filter(student__classe__startswith="1C").count(),
+            'eda2c': studentDisc.filter(student__classe__startswith="2C").count(),
+            'eda3c': studentDisc.filter(student__classe__startswith="3C").count(),
+            'eda1m': studentDisc.filter(student__classe__startswith="1M").count(),
+            'eda2m': studentDisc.filter(student__classe__startswith="2M").count(),
+            'eda3m': studentDisc.filter(student__classe__startswith="3M").count(),
+            'eda4': studentDisc.filter(student__classe__startswith="4").count(),
+        }
+    
+    totaux = {}
+    
+    totaux['eda1c'] = EDA.objects.filter(student__classe__startswith="1C").count();
+    totaux['eda2c'] = EDA.objects.filter(student__classe__startswith="2C").count();
+    totaux['eda3c'] = EDA.objects.filter(student__classe__startswith="3C").count();
+    totaux['eda1m'] = EDA.objects.filter(student__classe__startswith="1M").count();
+    totaux['eda2m'] = EDA.objects.filter(student__classe__startswith="2M").count();
+    totaux['eda3m'] = EDA.objects.filter(student__classe__startswith="3M").count();
+    
+    totaux['eda1'] = totaux['eda1c']+totaux['eda1m'];
+    totaux['eda2'] = totaux['eda2c']+totaux['eda2m'];
+    totaux['eda3'] = totaux['eda3c']+totaux['eda3m'];
+    totaux['eda4'] = EDA.objects.filter(student__classe__startswith="4").count();
+
+    return render(request, 'pymentorat/statistiques.html', {
+        'numberof': {
+            'byBranch': ByBranch,
+            'totaux': totaux,
+            'nbstudents': Student.objects.count(),
+            'nbmentors': Mentor.objects.count(),
+            'nbeda': EDA.objects.count(),
+            'nbcontracts': Contract.objects.count()
+        }
+        })
 # Several test to use Class Based Views (no success)
 
 # class StudentListView(LoginRequiredMixin, ListView):
