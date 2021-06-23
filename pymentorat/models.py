@@ -119,6 +119,10 @@ class EDA(TimeStampedModel):
         nb = Contract.objects.filter(eda=self, end_date=None).count()
         return nb
 
+    def get_school_year(self):
+        cl = Student.objects.filter(id=self.student_id)
+        return cl[0]
+
 
 class Contract(TimeStampedModel):
     eda = models.ForeignKey(EDA, on_delete=models.CASCADE)
@@ -158,6 +162,9 @@ class Contract(TimeStampedModel):
 
     def get_absolute_url(self):
         return reverse('pymentorat:contract_update', kwargs={'id_contract': self.pk})
+
+    def get_contract_children(self):
+        return Contract.objects.filter(contract_parent_id=self.id);
 
 class Convocation(TimeStampedModel):
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE)

@@ -148,13 +148,13 @@
             {% for contract in contracts %}
             <tr>
                 <td>
-                    {{contract.eda.student}} ({{contract.eda.classe}})
+                    {{contract.eda.student}} ({{contract.eda.student.classe}})
                     <a href="{% url 'pymentorat:eda_details' contract.eda.pk %}">
                         <i class="fas fa-info-circle" title="Ouvrir détails du demandeur"></i>
                     </a>
                 </td>
                 <td>
-                    {{contract.mentor.student}} ({{contract.mentor.classe}})
+                    {{contract.mentor.student}} ({{contract.mentor.student.classe}})
                     <a href="{% url 'pymentorat:mentor_details' contract.mentor.pk %}">
                         <i class="fas fa-info-circle" title="Ouvrir détails du mentor"></i>
                     </a>

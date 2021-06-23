@@ -31,15 +31,18 @@
                 <th>Actions</th>
             </tr>
             {% for contract in filter.qs %}
-            <tr>
+
+            {% if contract.contract_parent is None %}
+            <tr id="contract-tr-id-{{contract.id}}" 
+                class="{%if contract.end_date %}table-success{%endif%}">
                 <td>
-                    {{contract.eda.student}}
+                    {{contract.eda.student}} ({{contract.eda.student.classe}})
                     <a href="{% url 'pymentorat:eda_details' contract.eda.pk %}" >
                         <i class="fas fa-info-circle" title="Ouvrir détails du demandeur"></i>
                     </a>
                 </td>
                 <td>
-                    {{contract.mentor.student}}
+                    {{contract.mentor.student}} ({{contract.mentor.student.classe}})
                     <a href="{% url 'pymentorat:mentor_details' contract.mentor.pk %}" >
                         <i class="fas fa-info-circle" title="Ouvrir détails du mentor"></i>
                     </a>
@@ -71,6 +74,34 @@
                 </td>
 
             </tr>
+            {% endif %}
+
+            {% for child_contract in contract.get_contract_children %}
+            <tr class="table-warning">
+            <td class="pl-4"><i class="far fa-2x fa-copy"></i></td>
+            <td colspan=2 class="text-center">Contrat renouvelé</td>
+            <td>{{child_contract.begin_date | date:"d F Y"}}</td>
+            <td>{{child_contract.end_date | date:"d F Y"}}</td>
+            <td>
+            <a href="{% url 'pymentorat:contract_update' child_contract.pk %}">
+                        <i class="fas fa-marker" title="Modifier le contrat"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:contract_pdf' child_contract.pk %}">
+                        <i class="fas fa-print" title="Imprimer le contrat"></i>
+                    </a>
+
+                    <a href="{% url 'pymentorat:convocation_create' child_contract.pk %}">
+                        <i class="far fa-calendar-plus" title="Créer une convocation"></i>
+                    </a>
+                    <a href="{% url 'pymentorat:contract_duplicate' child_contract.pk %}">
+                        <i class="fas fa-folder-plus" title="Dupliquer le contrat"></i>
+                    </a>
+            </td>
+            </tr>
+
+            {% endfor %}
+
             {% endfor %}
         </table>
     {% else %}

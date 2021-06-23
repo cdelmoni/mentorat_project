@@ -154,6 +154,12 @@ urlpatterns = [
         views.convocation_pdf,
         name='convocation_pdf'
     ),
+    # Stats pages
+    path(
+        'statistiques/',
+        views.statistiques,
+        name='statistiques'
+    )
     # For Class Based Views
     # path(
     #     'contrat/',

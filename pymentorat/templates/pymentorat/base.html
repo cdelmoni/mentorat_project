@@ -20,7 +20,7 @@
         <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}" />
 
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-
+        
     </head>
     <body>
 
@@ -51,6 +51,9 @@
                     </li>
                     <li>
                         <a href="#">Imprimés</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'pymentorat:statistiques' %}">Statistiques</a>
                     </li>
                     <li>
                         <a href="{% url 'admin:index' %}">Administration</a>

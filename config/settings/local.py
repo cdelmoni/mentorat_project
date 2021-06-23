@@ -30,13 +30,15 @@ DATABASES = {
     }
 }
 
-INSTALLED_APPS +=[
-    'debug_toolbar',
-]
 
-MIDDLEWARE += [
-    'debug_toolbar.middleware.DebugToolbarMiddleware'
-]
+# Activer ou desactiver le debug toolbar
+# INSTALLED_APPS +=[
+#     'debug_toolbar',
+# ]
+
+# MIDDLEWARE += [
+#     'debug_toolbar.middleware.DebugToolbarMiddleware'
+# ]
 
 # Specific url file for local dev environment
 ROOT_URLCONF = 'config.urls-local'
