@@ -26,10 +26,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'b%!g&8*7!bc-oy15tmrxfm&_w&wub-*o68kmawpwy#*a&dl0l('
-
 # JSON-based secrets module
 with open(os.path.join(BASE_DIR, 'secrets.json')) as f:
     secrets = json.loads(f.read())

@@ -1,6 +1,6 @@
 # mentorat_project
 
-# Run project
+## Run project
 
 1. Start pgAdmin
 2. Run server: python manage.py runserver
